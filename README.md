@@ -44,7 +44,7 @@ A modern, responsive, and feature-packed **Expense Tracker with Budgeting** fron
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/Ronit77777/Expenz.git
+https://github.com/54NT05H/expenz.git
 cd Expenz
 ```
 
