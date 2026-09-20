@@ -41,19 +41,25 @@ export const ExpenseProvider = ({ children }) => {
   }, [budgetLimit]);
 
   // Load from backend if available
+
   const loadExpenses = async () => {
-    try {
-      setLoading(true);
-      const data = await expenseApi.getAllExpenses();
-      if (Array.isArray(data) && data.length > 0) {
-        setExpenses(data);
-      }
-    } catch {
-      // Backend not running, use local state
-    } finally {
-      setLoading(false);
+  try {
+    setLoading(true);
+    const data = await expenseApi.getAllExpenses();
+
+    if (Array.isArray(data)) {
+      setExpenses(data);
     }
-  };
+  } catch (error) {
+    console.error('Failed to load expenses:', error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+useEffect(() => {
+  loadExpenses();
+}, []);
 
   const addExpense = async (expenseData) => {
     try {
