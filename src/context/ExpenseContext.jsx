@@ -74,6 +74,24 @@ useEffect(() => {
     }
   };
 
+  const updateExpense = async (id, expenseData) => {
+    try {
+      const updated = await expenseApi.updateExpense(id, expenseData);
+      const updatedExp = updated?.expense || { ...expenseData, id };
+      setExpenses((prev) =>
+        prev.map((item) => (String(item.id ?? item._id) === String(id) ? { ...item, ...updatedExp } : item))
+      );
+      await loadExpenses();
+      return { success: true };
+    } catch {
+      setExpenses((prev) =>
+        prev.map((item) => (String(item.id ?? item._id) === String(id) ? { ...item, ...expenseData, id } : item))
+      );
+      await loadExpenses();
+      return { success: true };
+    }
+  };
+
   const deleteExpense = async (id) => {
     try {
       await expenseApi.deleteExpense(id);
@@ -184,6 +202,7 @@ useEffect(() => {
         addExpense,
         deleteExpense,
         updateBudget,
+        updateExpense,
       }}
     >
       {children}

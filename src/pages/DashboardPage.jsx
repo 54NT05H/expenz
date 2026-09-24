@@ -20,8 +20,24 @@ import {
 import { Link } from 'react-router-dom';
 
 export const DashboardPage = () => {
-  const { stats, addExpense, selectedMonth, setSelectedMonth, monthlyHistory } = useExpenses();
+  const { stats, addExpense, updateExpense, selectedMonth, setSelectedMonth, monthlyHistory } = useExpenses();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [editingExpense, setEditingExpense] = useState(null);
+
+  const closeModal = () => {
+    setIsAddModalOpen(false);
+    setEditingExpense(null);
+  };
+
+  const handleAddExpense = async (payload) => {
+    await addExpense(payload);
+  };
+
+  const handleUpdateExpense = async (payload) => {
+    if (!editingExpense) return;
+    const id = editingExpense.id || editingExpense._id;
+    await updateExpense(id, payload);
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -48,7 +64,10 @@ export const DashboardPage = () => {
           </div>
 
           <button
-            onClick={() => setIsAddModalOpen(true)}
+            onClick={() => {
+              setEditingExpense(null);
+              setIsAddModalOpen(true);
+            }}
             className="btn btn-gradient"
             style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
           >
@@ -140,13 +159,18 @@ export const DashboardPage = () => {
             View All & Filter →
           </Link>
         </div>
-        <ExpenseTable />
+        <ExpenseTable onEditExpense={(expense) => {
+          setEditingExpense(expense);
+          setIsAddModalOpen(true);
+        }} />
       </div>
 
       <ExpenseFormModal
         isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onSubmit={addExpense}
+        onClose={closeModal}
+        onSubmit={editingExpense ? handleUpdateExpense : handleAddExpense}
+        initialData={editingExpense}
+        isEditMode={Boolean(editingExpense)}
       />
     </div>
   );

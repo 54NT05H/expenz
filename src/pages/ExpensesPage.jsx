@@ -7,8 +7,24 @@ import { formatCurrency } from '../utils/currencyFormatter';
 import { PlusCircle, Receipt, Download } from 'lucide-react';
 
 export const ExpensesPage = () => {
-  const { expenses, addExpense, stats } = useExpenses();
+  const { expenses, addExpense, updateExpense } = useExpenses();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [editingExpense, setEditingExpense] = useState(null);
+
+  const closeModal = () => {
+    setIsAddModalOpen(false);
+    setEditingExpense(null);
+  };
+
+  const handleAddExpense = async (payload) => {
+    await addExpense(payload);
+  };
+
+  const handleUpdateExpense = async (payload) => {
+    if (!editingExpense) return;
+    const id = editingExpense.id || editingExpense._id;
+    await updateExpense(id, payload);
+  };
 
   // Quick export CSV helper
   const exportCSV = () => {
@@ -51,7 +67,10 @@ export const ExpensesPage = () => {
           </button>
 
           <button
-            onClick={() => setIsAddModalOpen(true)}
+            onClick={() => {
+              setEditingExpense(null);
+              setIsAddModalOpen(true);
+            }}
             className="btn btn-gradient"
             style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
           >
@@ -65,12 +84,17 @@ export const ExpensesPage = () => {
       <ExpenseFilters />
 
       {/* Table */}
-      <ExpenseTable />
+      <ExpenseTable onEditExpense={(expense) => {
+        setEditingExpense(expense);
+        setIsAddModalOpen(true);
+      }} />
 
       <ExpenseFormModal
         isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onSubmit={addExpense}
+        onClose={closeModal}
+        onSubmit={editingExpense ? handleUpdateExpense : handleAddExpense}
+        initialData={editingExpense}
+        isEditMode={Boolean(editingExpense)}
       />
     </div>
   );

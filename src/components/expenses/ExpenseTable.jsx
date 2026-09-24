@@ -3,9 +3,9 @@ import { useExpenses } from '../../context/ExpenseContext';
 import { CategoryBadge } from './CategoryBadge';
 import { formatCurrency } from '../../utils/currencyFormatter';
 import { formatDate } from '../../utils/dateHelper';
-import { Trash2, Receipt } from 'lucide-react';
+import { Trash2, Receipt, Pencil } from 'lucide-react';
 
-export const ExpenseTable = () => {
+export const ExpenseTable = ({ onEditExpense }) => {
   const { expenses, deleteExpense, loading } = useExpenses();
 
   if (loading) {
@@ -76,14 +76,24 @@ export const ExpenseTable = () => {
                     - {formatCurrency(exp.amount)}
                   </td>
                   <td style={{ padding: '1rem 1.25rem', textAlign: 'center' }}>
-                    <button
-                      onClick={() => deleteExpense(expId)}
-                      className="btn btn-danger btn-sm"
-                      title="Delete Expense"
-                      style={{ padding: '0.4rem 0.5rem', borderRadius: '6px' }}
-                    >
-                      <Trash2 size={15} />
-                    </button>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
+                      <button
+                        onClick={() => onEditExpense?.(exp)}
+                        className="btn btn-secondary btn-sm"
+                        title="Edit Expense"
+                        style={{ padding: '0.4rem 0.5rem', borderRadius: '6px' }}
+                      >
+                        <Pencil size={15} />
+                      </button>
+                      <button
+                        onClick={() => deleteExpense(expId)}
+                        className="btn btn-danger btn-sm"
+                        title="Delete Expense"
+                        style={{ padding: '0.4rem 0.5rem', borderRadius: '6px' }}
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               );

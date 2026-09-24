@@ -21,7 +21,8 @@ export const AuthProvider = ({ children }) => {
           localStorage.setItem('fintrack_user', JSON.stringify(data.user));
         }
       } catch (err) {
-        // Keep active local/demo user
+        setUser(null);
+        localStorage.removeItem('fintrack_user');
       }
     };
 

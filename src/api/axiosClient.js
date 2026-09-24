@@ -10,15 +10,17 @@ const axiosClient = axios.create({
   withCredentials: true, // Enables HTTP-Only JWT Cookie sending
 });
 
-// Response interceptor for handling 401 Unauthorized
+// Only treat auth-related 401s as session expiry. Expense CRUD requests may fail
+// for other reasons without requiring the user to be kicked back to login.
 axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    // If backend returns 401 on protected endpoint and we are not already on /login
-    if (error.response?.status === 401 && !window.location.pathname.includes('/login') && !window.location.pathname.includes('/register')) {
-      // Optional: dispatch custom event or let AuthContext handle it
+    const isAuthFailure = error.config?.url?.includes('/auth/') || error.config?.url === '/auth/me';
+
+    if (error.response?.status === 401 && isAuthFailure) {
       window.dispatchEvent(new CustomEvent('auth:unauthorized'));
     }
+
     return Promise.reject(error);
   }
 );

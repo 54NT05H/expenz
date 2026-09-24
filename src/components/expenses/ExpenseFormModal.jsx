@@ -1,18 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal } from '../common/Modal';
 import { EXPENSE_CATEGORIES } from '../../utils/constants';
 import { getCurrentISODate } from '../../utils/dateHelper';
 
-export const ExpenseFormModal = ({ isOpen, onClose, onSubmit }) => {
-  const [formData, setFormData] = useState({
-    title: '',
-    amount: '',
-    category: EXPENSE_CATEGORIES[0].label,
-    date: getCurrentISODate(),
-    notes: '',
-  });
+const createEmptyFormData = () => ({
+  title: '',
+  amount: '',
+  category: EXPENSE_CATEGORIES[0].label,
+  date: getCurrentISODate(),
+  notes: '',
+});
+
+export const ExpenseFormModal = ({ isOpen, onClose, onSubmit, initialData = null, isEditMode = false }) => {
+  const [formData, setFormData] = useState(createEmptyFormData());
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    if (isEditMode && initialData) {
+      setFormData({
+        title: initialData.title || '',
+        amount: initialData.amount ?? '',
+        category: initialData.category || EXPENSE_CATEGORIES[0].label,
+        date: initialData.date || getCurrentISODate(),
+        notes: initialData.notes || '',
+      });
+      return;
+    }
+
+    setFormData(createEmptyFormData());
+  }, [isOpen, isEditMode, initialData]);
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -36,13 +55,7 @@ export const ExpenseFormModal = ({ isOpen, onClose, onSubmit }) => {
         ...formData,
         amount: Number(formData.amount),
       });
-      setFormData({
-        title: '',
-        amount: '',
-        category: EXPENSE_CATEGORIES[0].label,
-        date: getCurrentISODate(),
-        notes: '',
-      });
+      setFormData(createEmptyFormData());
       onClose();
     } catch (err) {
       setError('Failed to save expense. Please try again.');
@@ -52,7 +65,7 @@ export const ExpenseFormModal = ({ isOpen, onClose, onSubmit }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Add New Expense">
+    <Modal isOpen={isOpen} onClose={onClose} title={isEditMode ? 'Edit Expense' : 'Add New Expense'}>
       <form onSubmit={handleSubmit}>
         {error && (
           <div style={{ padding: '0.75rem', marginBottom: '1rem', borderRadius: 'var(--radius-md)', background: 'var(--danger-bg)', color: 'var(--danger)', fontSize: '0.85rem' }}>
@@ -135,7 +148,7 @@ export const ExpenseFormModal = ({ isOpen, onClose, onSubmit }) => {
             Cancel
           </button>
           <button type="submit" disabled={submitting} className="btn btn-primary">
-            {submitting ? 'Saving...' : 'Add Expense'}
+            {submitting ? 'Saving...' : isEditMode ? 'Update Expense' : 'Add Expense'}
           </button>
         </div>
       </form>
