@@ -2,7 +2,7 @@
   "name": "expense-tracker-frontend",
   "version": "1.0.0",
   "private": true,
-  "description": "A modern, responsive, and feature-packed **Expense Tracker with Budgeting** frontend application built using **React 19**, **Vite**, **Recharts**, and **Vanilla CSS**.",
+  "description": "Expense tracker and budgeting app built with React 19, Vite and Recharts.",
   "homepage": "https://github.com/54NT05H/expenz#readme",
   "bugs": {
     "url": "https://github.com/54NT05H/expenz/issues"
@@ -11,10 +11,9 @@
     "type": "git",
     "url": "git+https://github.com/54NT05H/expenz.git"
   },
-  "license": "ISC",
+  "license": "MIT",
   "author": "",
   "type": "module",
-  "main": "app.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
