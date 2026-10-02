@@ -143,7 +143,7 @@ const handleDemoLogin = async () => {
         </form>
 
         <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-          Don't have an account?{' '}
+          Don&apos;t have an account?{' '}
           <Link to="/register" style={{ color: 'var(--accent-primary)', fontWeight: 700 }}>
             Sign up here
           </Link>
