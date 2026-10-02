@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { useExpenses } from '../../context/ExpenseContext';
 import { formatCurrency } from '../../utils/currencyFormatter';
 import { SetBudgetModal } from './SetBudgetModal';
 import { Target, AlertTriangle, CheckCircle2, Edit3 } from 'lucide-react';
+import { useBudget } from '../../context/BudgetContext';
+import { useExpenseStats } from '../../hooks/useExpenseStats';
 
 export const BudgetProgressCard = () => {
-  const { stats, updateBudget } = useExpenses();
+  const { updateBudget } = useBudget();
+  const stats = useExpenseStats();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { totalSpent, budgetLimit, remainingBudget, percentageUsed, isOverBudget } = stats;

@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { useExpenses } from '../context/ExpenseContext';
 import { BudgetProgressCard } from '../components/budget/BudgetProgressCard';
 import { SetBudgetModal } from '../components/budget/SetBudgetModal';
 import { EXPENSE_CATEGORIES } from '../utils/constants';
 import { formatCurrency } from '../utils/currencyFormatter';
 import { Target, Sparkles, Edit3, Plus, Minus } from 'lucide-react';
+import { useBudget } from '../context/BudgetContext';
+import { useExpenseStats } from '../hooks/useExpenseStats';
 
 export const BudgetPage = () => {
-  const { stats, updateBudget, budgetLimit } = useExpenses();
+  const { budgetLimit, updateBudget } = useBudget();
+  const stats = useExpenseStats();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleQuickStep = (amount) => {

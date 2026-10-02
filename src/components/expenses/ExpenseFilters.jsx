@@ -1,5 +1,5 @@
 import React from 'react';
-import { useExpenses } from '../../context/ExpenseContext';
+import { useFilters } from '../../context/FilterContext';
 import { EXPENSE_CATEGORIES } from '../../utils/constants';
 import { Search, Filter, Calendar } from 'lucide-react';
 
@@ -11,7 +11,7 @@ export const ExpenseFilters = () => {
     setSelectedCategory,
     selectedMonth,
     setSelectedMonth,
-  } = useExpenses();
+  } = useFilters();
 
   return (
     <div className="glass-card" style={{ padding: '1rem', marginBottom: '1.5rem' }}>

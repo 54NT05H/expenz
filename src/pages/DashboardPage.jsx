@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
-import { useExpenses } from '../context/ExpenseContext';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useFilters } from '../context/FilterContext';
+import { useExpenseStats } from '../hooks/useExpenseStats';
+import { useExpenseModal } from '../hooks/useExpenseModal';
 import { StatCard } from '../components/common/StatCard';
 import { BudgetProgressCard } from '../components/budget/BudgetProgressCard';
 import { CategoryPieChart } from '../components/charts/CategoryPieChart';
@@ -15,29 +18,12 @@ import {
   PlusCircle,
   PieChart as PieIcon,
   BarChart3,
-  Calendar,
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
 
 export const DashboardPage = () => {
-  const { stats, addExpense, updateExpense, selectedMonth, setSelectedMonth, monthlyHistory } = useExpenses();
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [editingExpense, setEditingExpense] = useState(null);
-
-  const closeModal = () => {
-    setIsAddModalOpen(false);
-    setEditingExpense(null);
-  };
-
-  const handleAddExpense = async (payload) => {
-    await addExpense(payload);
-  };
-
-  const handleUpdateExpense = async (payload) => {
-    if (!editingExpense) return;
-    const id = editingExpense.id || editingExpense._id;
-    await updateExpense(id, payload);
-  };
+  const stats = useExpenseStats();
+  const { selectedMonth, setSelectedMonth } = useFilters();
+  const { openAdd, openEdit, modalProps } = useExpenseModal();
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -64,10 +50,7 @@ export const DashboardPage = () => {
           </div>
 
           <button
-            onClick={() => {
-              setEditingExpense(null);
-              setIsAddModalOpen(true);
-            }}
+            onClick={openAdd}
             className="btn btn-gradient"
             style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
           >
@@ -115,7 +98,6 @@ export const DashboardPage = () => {
 
       {/* Budget Progress & Category Breakdown Charts */}
       <div className="grid-2col">
-        {/* Left Column: Budget Progress Card & Monthly Bar Chart */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           <BudgetProgressCard />
 
@@ -126,11 +108,10 @@ export const DashboardPage = () => {
                 6-Month Spending vs Budget (Limit: {formatCurrency(stats.budgetLimit)})
               </h3>
             </div>
-            <MonthlyBarChart data={monthlyHistory} />
+            <MonthlyBarChart data={stats.monthlyHistory} />
           </div>
         </div>
 
-        {/* Right Column: Recharts Category Breakdown Pie Chart */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           <div className="glass-card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
@@ -159,19 +140,10 @@ export const DashboardPage = () => {
             View All & Filter →
           </Link>
         </div>
-        <ExpenseTable onEditExpense={(expense) => {
-          setEditingExpense(expense);
-          setIsAddModalOpen(true);
-        }} />
+        <ExpenseTable onEditExpense={openEdit} />
       </div>
 
-      <ExpenseFormModal
-        isOpen={isAddModalOpen}
-        onClose={closeModal}
-        onSubmit={editingExpense ? handleUpdateExpense : handleAddExpense}
-        initialData={editingExpense}
-        isEditMode={Boolean(editingExpense)}
-      />
+      <ExpenseFormModal {...modalProps} />
     </div>
   );
 };

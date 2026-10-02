@@ -1,30 +1,14 @@
-import React, { useState } from 'react';
-import { useExpenses } from '../context/ExpenseContext';
+import React from 'react';
+import { useFilteredExpenses } from '../hooks/useFilteredExpenses';
+import { useExpenseModal } from '../hooks/useExpenseModal';
 import { ExpenseFilters } from '../components/expenses/ExpenseFilters';
 import { ExpenseTable } from '../components/expenses/ExpenseTable';
 import { ExpenseFormModal } from '../components/expenses/ExpenseFormModal';
-import { formatCurrency } from '../utils/currencyFormatter';
-import { PlusCircle, Receipt, Download } from 'lucide-react';
+import { PlusCircle, Download } from 'lucide-react';
 
 export const ExpensesPage = () => {
-  const { expenses, addExpense, updateExpense } = useExpenses();
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [editingExpense, setEditingExpense] = useState(null);
-
-  const closeModal = () => {
-    setIsAddModalOpen(false);
-    setEditingExpense(null);
-  };
-
-  const handleAddExpense = async (payload) => {
-    await addExpense(payload);
-  };
-
-  const handleUpdateExpense = async (payload) => {
-    if (!editingExpense) return;
-    const id = editingExpense.id || editingExpense._id;
-    await updateExpense(id, payload);
-  };
+  const expenses = useFilteredExpenses();
+  const { openAdd, openEdit, modalProps } = useExpenseModal();
 
   // Quick export CSV helper
   const exportCSV = () => {
@@ -41,7 +25,7 @@ export const ExpensesPage = () => {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `fintrack_expenses_${Date.now()}.csv`);
+    link.setAttribute('download', `expenz_expenses_${Date.now()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -67,10 +51,7 @@ export const ExpensesPage = () => {
           </button>
 
           <button
-            onClick={() => {
-              setEditingExpense(null);
-              setIsAddModalOpen(true);
-            }}
+            onClick={openAdd}
             className="btn btn-gradient"
             style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
           >
@@ -80,22 +61,11 @@ export const ExpensesPage = () => {
         </div>
       </div>
 
-      {/* Filters */}
       <ExpenseFilters />
 
-      {/* Table */}
-      <ExpenseTable onEditExpense={(expense) => {
-        setEditingExpense(expense);
-        setIsAddModalOpen(true);
-      }} />
+      <ExpenseTable onEditExpense={openEdit} />
 
-      <ExpenseFormModal
-        isOpen={isAddModalOpen}
-        onClose={closeModal}
-        onSubmit={editingExpense ? handleUpdateExpense : handleAddExpense}
-        initialData={editingExpense}
-        isEditMode={Boolean(editingExpense)}
-      />
+      <ExpenseFormModal {...modalProps} />
     </div>
   );
 };

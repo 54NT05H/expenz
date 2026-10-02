@@ -4,9 +4,11 @@ import { CategoryBadge } from './CategoryBadge';
 import { formatCurrency } from '../../utils/currencyFormatter';
 import { formatDate } from '../../utils/dateHelper';
 import { Trash2, Receipt, Pencil } from 'lucide-react';
+import { useFilteredExpenses } from '../../hooks/useFilteredExpenses';
 
 export const ExpenseTable = ({ onEditExpense }) => {
-  const { expenses, deleteExpense, loading } = useExpenses();
+  const { deleteExpense, loading } = useExpenses();
+  const expenses = useFilteredExpenses();
 
   if (loading) {
     return (
