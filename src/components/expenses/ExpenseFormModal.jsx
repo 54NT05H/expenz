@@ -58,7 +58,7 @@ export const ExpenseFormModal = ({ isOpen, onClose, onSubmit, initialData = null
       setFormData(createEmptyFormData());
       onClose();
     } catch (err) {
-      setError('Failed to save expense. Please try again.');
+      setError(err.message || 'Failed to save expense. Please try again.');
     } finally {
       setSubmitting(false);
     }

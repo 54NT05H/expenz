@@ -3,33 +3,34 @@ import { format, subMonths } from 'date-fns';
 import { expenseApi } from '../api/expenseApi';
 import { budgetApi } from '../api/budgetApi';
 import { useAuth } from './AuthContext';
-import { DEFAULT_BUDGET } from '../utils/constants';;
+import { useToast } from './ToastContext';
+import { getErrorMessage } from '../utils/errorHelper';
+import { DEFAULT_BUDGET } from '../utils/constants';
 
 const ExpenseContext = createContext(null);
 
-
-
-// Every user gets their own storage keys, so accounts never see each other's cache.
-const expensesKey = (userId) => `expenz_expenses_${userId}`;
+// Expenses now come ONLY from the server. The budget is still kept in
+// localStorage (per user) because the app doesn't load it from the server yet.
 const budgetKey = (userId) => `expenz_budget_${userId}`;
 
-const readCache = (key, fallback) => {
+const readBudget = (userId) => {
   try {
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : fallback;
+    const raw = localStorage.getItem(budgetKey(userId));
+    const value = raw ? Number(JSON.parse(raw)) : DEFAULT_BUDGET;
+    return Number.isFinite(value) && value > 0 ? value : DEFAULT_BUDGET;
   } catch {
-    return fallback; // corrupted data → ignore it
+    return DEFAULT_BUDGET; // corrupted data → ignore it
   }
 };
 
 export const ExpenseProvider = ({ children }) => {
   const { user } = useAuth();
+  const toast = useToast();
   const userId = user?.id;
 
   const [expenses, setExpenses] = useState([]);
   const [budgetLimit, setBudgetLimit] = useState(DEFAULT_BUDGET);
-  // Whose data is currently in `expenses` and `budgetLimit`?
-  // Stops us saving user A's data under user B's key during a switch.
+  // Whose budget is currently on screen? Prevents saving user A's budget under user B's key.
   const [dataOwner, setDataOwner] = useState(null);
 
   const [loading, setLoading] = useState(false);
@@ -41,103 +42,105 @@ export const ExpenseProvider = ({ children }) => {
     try {
       setLoading(true);
       const data = await expenseApi.getAllExpenses();
-      if (Array.isArray(data)) {
-        setExpenses(data);
-      }
+      setExpenses(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error('Failed to load expenses:', error);
+      // A 401 means "session expired": the axios interceptor already logs the
+      // user out, so a red toast on top of that would just be noise.
+      if (error.response?.status !== 401) {
+        toast.error(getErrorMessage(error, 'Could not load your expenses.'));
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  // One-time cleanup of the old shared keys that leaked between accounts.
+  // One-time cleanup: delete the old browser caches from earlier versions.
   useEffect(() => {
-    ['fintrack_expenses', 'fintrack_budget', 'fintrack_user'].forEach((key) =>
-      localStorage.removeItem(key)
+    const oldKeys = Object.keys(localStorage).filter(
+      (key) =>
+        key.startsWith('expenz_expenses_') ||
+        ['fintrack_expenses', 'fintrack_budget', 'fintrack_user'].includes(key)
     );
+    oldKeys.forEach((key) => localStorage.removeItem(key));
   }, []);
 
   // Runs whenever the logged-in user changes (login, logout, switching accounts).
   useEffect(() => {
     if (!userId) {
-      // Logged out: wipe the screen state.
       setExpenses([]);
       setBudgetLimit(DEFAULT_BUDGET);
       setDataOwner(null);
       return;
     }
 
-    // Logged in: show THIS user's cache instantly, then refresh from the server.
-    setExpenses(readCache(expensesKey(userId), []));
-    setBudgetLimit(Number(readCache(budgetKey(userId), DEFAULT_BUDGET)));
+    setExpenses([]); // never show the previous user's expenses
+    setBudgetLimit(readBudget(userId));
     setDataOwner(userId);
     loadExpenses();
   }, [userId]);
 
-  // Save to THIS user's keys, but only if the data on screen really belongs to them.
-  useEffect(() => {
-    if (!userId || dataOwner !== userId) return;
-    localStorage.setItem(expensesKey(userId), JSON.stringify(expenses));
-  }, [expenses, userId, dataOwner]);
-
+  // Save the budget under THIS user's key, only if it really belongs to them.
   useEffect(() => {
     if (!userId || dataOwner !== userId) return;
     localStorage.setItem(budgetKey(userId), JSON.stringify(budgetLimit));
   }, [budgetLimit, userId, dataOwner]);
 
+  // ---------- Add / edit: THROW on failure so the form can show the error ----------
+
   const addExpense = async (expenseData) => {
     try {
-      const created = await expenseApi.addExpense(expenseData);
-      const newExp = created?.expense || { ...expenseData, id: Date.now().toString() };
-      setExpenses((prev) => [newExp, ...prev]);
-      return { success: true };
-    } catch {
-      const newExp = { ...expenseData, id: Date.now().toString() };
-      setExpenses((prev) => [newExp, ...prev]);
-      return { success: true };
+      const data = await expenseApi.addExpense(expenseData);
+      setExpenses((prev) => [data.expense, ...prev]);
+      toast.success('Expense added');
+    } catch (error) {
+      throw new Error(getErrorMessage(error, 'Could not save the expense.'));
     }
   };
 
   const updateExpense = async (id, expenseData) => {
     try {
-      const updated = await expenseApi.updateExpense(id, expenseData);
-      const updatedExp = updated?.expense || { ...expenseData, id };
+      const data = await expenseApi.updateExpense(id, expenseData);
       setExpenses((prev) =>
-        prev.map((item) => (String(item.id ?? item._id) === String(id) ? { ...item, ...updatedExp } : item))
+        prev.map((item) => (String(item.id) === String(id) ? data.expense : item))
       );
-      await loadExpenses();
-      return { success: true };
-    } catch {
-      setExpenses((prev) =>
-        prev.map((item) => (String(item.id ?? item._id) === String(id) ? { ...item, ...expenseData, id } : item))
-      );
-      await loadExpenses();
-      return { success: true };
+      toast.success('Expense updated');
+    } catch (error) {
+      throw new Error(getErrorMessage(error, 'Could not update the expense.'));
     }
   };
+
+  // ---------- Delete / budget: no form to show an error in, so use a toast ----------
 
   const deleteExpense = async (id) => {
     try {
       await expenseApi.deleteExpense(id);
-    } catch {
-      // Fallback local
-    } finally {
-      setExpenses((prev) => prev.filter((item) => item.id !== id && item._id !== id));
+      setExpenses((prev) => prev.filter((item) => String(item.id) !== String(id)));
+      toast.success('Expense deleted');
+    } catch (error) {
+      toast.error(getErrorMessage(error, 'Could not delete the expense.'));
     }
   };
 
+  // Returns true if saved, false if not (so the modal knows whether to close).
   const updateBudget = async (newLimit) => {
-  const numericLimit = Number(newLimit);
-  setBudgetLimit(numericLimit); // the effect above saves it under this user's key
-  try {
-    await budgetApi.setBudget({ limit: numericLimit, month: selectedMonth });
-  } catch {
-    // Keep local state update
-  }
-};
+    const numericLimit = Number(newLimit);
+    if (!Number.isFinite(numericLimit) || numericLimit <= 0) {
+      toast.error('Enter a valid budget amount.');
+      return false;
+    }
 
-  // Filtered Expenses
+    try {
+      // Server first. Only change the screen after the server accepted it.
+      await budgetApi.setBudget({ limit: numericLimit, month: selectedMonth });
+      setBudgetLimit(numericLimit);
+      return true;
+    } catch (error) {
+      toast.error(getErrorMessage(error, 'Could not save the budget.'));
+      return false;
+    }
+  };
+
+  // ---------- Filtered Expenses ----------
   const filteredExpenses = useMemo(() => {
     return expenses.filter((item) => {
       const matchesCategory = selectedCategory === 'All' || item.category === selectedCategory;
@@ -149,37 +152,37 @@ export const ExpenseProvider = ({ children }) => {
     });
   }, [expenses, selectedCategory, searchQuery, selectedMonth]);
 
-  // Dynamic Monthly History for Recharts (Spending vs Budget Limit)
-  // Spending for each of the last 6 months (ending with the current month),
-// calculated only from real expenses.
-const monthlyHistory = useMemo(() => {
-  const today = new Date();
+  // ---------- Spending for each of the last 6 months, from real expenses ----------
+  const monthlyHistory = useMemo(() => {
+    const today = new Date();
 
-  return Array.from({ length: 6 }, (_, i) => {
-    const monthDate = subMonths(today, 5 - i);     // i=0 → 5 months ago, i=5 → this month
-    const key = format(monthDate, 'yyyy-MM');      // e.g. "2026-10"
+    return Array.from({ length: 6 }, (_, i) => {
+      const monthDate = subMonths(today, 5 - i);
+      const key = format(monthDate, 'yyyy-MM');
 
-    const spent = expenses
-      .filter((e) => e.date && e.date.startsWith(key))
-      .reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+      const spent = expenses
+        .filter((e) => e.date && e.date.startsWith(key))
+        .reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
 
-    return {
-      month: format(monthDate, 'MMM'),             // e.g. "Oct"
-      spent,
-      budget: budgetLimit,
-    };
-  });
-}, [expenses, budgetLimit]);
+      return {
+        month: format(monthDate, 'MMM'),
+        spent,
+        budget: budgetLimit,
+      };
+    });
+  }, [expenses, budgetLimit]);
 
-  // Stats Calculations
+  // ---------- Stats ----------
   const stats = useMemo(() => {
-    const currentMonthExpenses = expenses.filter((e) => (selectedMonth ? e.date?.startsWith(selectedMonth) : true));
+    const currentMonthExpenses = expenses.filter((e) =>
+      selectedMonth ? e.date?.startsWith(selectedMonth) : true
+    );
     const totalSpent = currentMonthExpenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
     const remainingBudget = budgetLimit - totalSpent;
-    const percentageUsed = budgetLimit > 0 ? Math.min(Math.round((totalSpent / budgetLimit) * 100), 100) : 0;
+    const percentageUsed =
+      budgetLimit > 0 ? Math.min(Math.round((totalSpent / budgetLimit) * 100), 100) : 0;
     const isOverBudget = totalSpent > budgetLimit;
 
-    // Category Breakdown for Recharts
     const categoryTotals = {};
     currentMonthExpenses.forEach((exp) => {
       const cat = exp.category || 'Other';

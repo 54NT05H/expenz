@@ -23,8 +23,8 @@ export const SetBudgetModal = ({ isOpen, onClose, currentBudget, onSave }) => {
     if (!num || num <= 0) return;
     try {
       setSubmitting(true);
-      await onSave(num);
-      onClose();
+      const saved = await onSave(num);
+      if (saved) onClose();   // on failure, stay open so the user can retry
     } finally {
       setSubmitting(false);
     }

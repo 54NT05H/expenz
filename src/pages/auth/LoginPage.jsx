@@ -2,11 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Wallet, Lock, Mail, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react';
+import { getErrorMessage } from '../../utils/errorHelper';
 
-const getErrorMessage = (err, fallback) => {
-  if (!err.response) return 'Cannot reach the server. Is the backend running?';
-  return err.response.data?.message || fallback;
-};
 
 
 export const LoginPage = () => {
