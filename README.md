@@ -1,95 +1,114 @@
-# 💳 Expenz — Smart Expense Tracker & Budgeting App
+# 💳 Expenz — Expense Tracker & Budgeting App
 
-A modern, responsive, and feature-packed **Expense Tracker with Budgeting** frontend application built using **React 19**, **Vite**, **Recharts**, and **Vanilla CSS**.
+A responsive expense tracker with budgeting, built with **React 19**, **Vite**, **Recharts** and an **Express** backend.
 
----
+> ⚠️ **Portfolio / learning project.** The backend keeps users, sessions and expenses **in memory**, so all data resets whenever the server restarts.
 
-## 🌟 Key Features
+## Features
 
-- 🔐 **Authentication Ready:** Integrated for Session authentication with HTTP-only cookies and bcrypt-hashed passwords and bcrypt-secured backend endpoints.
-- ⚡ **Instant Demo Mode:** One-click demo login to test full functionality without waiting for a backend connection.
-- 📊 **Interactive Recharts Visualizations:**
-  - **Expenses by Category:** Interactive donut/pie chart with custom tooltips and legend.
-  - **Monthly Comparison:** 6-month spending vs budget limit bar chart.
-- 💰 **Budget Planner & Limits:**
-  - Dynamic monthly budget cap adjuster (`+₹5k`, `-₹5k`, custom modal).
-  - Real-time budget progress bar with warning states (On Track, Approaching, Over Budget).
-  - 50/30/20 smart financial budgeting guidance.
-- 🏷️ **Expense Management:**
-  - Add expenses with title, category, date, amount (₹), and optional notes.
-  - Search by keywords across titles and notes.
-  - Filter by category and cycle month.
-  - Instant transaction deletion.
-  - 📥 **CSV Export:** One-click export of all filtered expenses to a CSV file.
-- 🎨 **Lightweight & Catchy UI:**
-  - Clean fintech aesthetic with crisp borders, soft shadows, and vibrant electric indigo/cyan gradients.
-  - 📱 Fully responsive across desktop, tablet, and mobile screens.
+- 🔐 **Authentication:** register, log in and log out using HTTP-only session cookies. Passwords are hashed with **bcrypt**.
+- 📊 **Charts:** spending by category (donut chart) and the last 6 months of spending versus your budget (bar chart).
+- 💰 **Budget planner:** set a monthly limit, see a live progress bar (on track / approaching / over budget) and per-category usage.
+- 🏷️ **Expense management:** add, edit and delete expenses; search by title or notes; filter by category and month.
+- 📥 **CSV export** of the expenses currently shown.
+- 🔔 **Toast notifications** and inline error messages when something fails.
+- 📱 Responsive layout.
 
----
+## Tech stack
 
-## 🛠️ Tech Stack
+| Area | Tools |
+|---|---|
+| Frontend | React 19, Vite, React Router v7, Recharts, Axios, date-fns, Lucide icons |
+| Backend | Node.js, Express, cookie-parser, cors, bcryptjs |
+| Styling | Vanilla CSS with custom properties |
+| Tooling | ESLint, Prettier |
 
-- **Frontend Framework:** React 19
-- **Build Tool:** Vite
-- **Routing:** React Router v7
-- **Charts:** Recharts
-- **HTTP Client:** Axios (with `withCredentials: true` for HTTP-only cookies)
-- **Icons:** Lucide React
-- **Date Utilities:** date-fns
-- **Styling:** Modern Vanilla CSS with CSS Custom Properties
+## Requirements
 
----
+- **Node.js 20.19+** (or 22.12+). Check with `node -v`.
+- npm
 
-## 🚀 Getting Started
+## Getting started
 
 ### 1. Clone the repository
 
 ```bash
-https://github.com/54NT05H/expenz.git
-cd Expenz
+git clone https://github.com/54NT05H/expenz.git
+cd expenz
 ```
 
-### 2. Install dependencies
+### 2. Start the backend (terminal 1)
 
 ```bash
+cd backend
 npm install
-```
-
-### 3. Start development server
-
-```bash
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) in your browser.
+The API runs on **http://localhost:5001**. Check it at http://localhost:5001/api/health.
 
-### 4. Build for production
+### 3. Start the frontend (terminal 2, from the project root)
 
 ```bash
-npm run build
+npm install
+npm run dev
 ```
 
----
+Open **http://localhost:5173**. Requests to `/api` are proxied to the backend by Vite.
 
-## 📂 Project Structure
+### 4. Log in
+
+| | |
+|---|---|
+| Email | `demo@fintrack.io` |
+| Password | `demo123` |
+
+You can also click **Quick Demo Login**, or register your own account.
+
+## Configuration
+
+Both `.env` files are optional. The defaults work out of the box.
+
+| File | Variable | Default | Purpose |
+|---|---|---|---|
+| `backend/.env` | `PORT` | `5001` | Backend port (if you change it, update the proxy target in `vite.config.js` too) |
+| `backend/.env` | `CLIENT_URL` | `http://localhost:5173` | Frontend origin allowed by CORS |
+| `.env` | `VITE_API_BASE_URL` | `/api` | API base URL used by the frontend |
+
+Copy the templates with `Copy-Item .env.example .env` (PowerShell) or `cp .env.example .env` (macOS/Linux).
+
+## Scripts
+
+| Command | What it does |
+|---|---|
+| `npm run dev` | Start the frontend dev server |
+| `npm run build` | Create a production build in `dist/` |
+| `npm run preview` | Preview the production build |
+| `npm run lint` | Check the code with ESLint |
+| `npm run format` | Format the code with Prettier |
+
+## Project structure
 
 ```text
-src/
-├── api/             # Axios client & modular API endpoints (Auth, Expenses, Budget)
-├── components/      # UI Components
-│   ├── budget/      # Budget progress cards & limit setting modals
-│   ├── charts/      # Recharts Pie & Bar charts
-│   ├── common/      # StatCards, Modals, Badges
-│   ├── expenses/    # Expense forms, tables, filters
-│   └── layout/      # Navbar, Sidebar, ProtectedRoute, DashboardLayout
-├── context/         # AuthContext & ExpenseContext state providers
-├── pages/           # DashboardPage, ExpensesPage, BudgetPage, Auth pages
-├── styles/          # Design system & CSS custom properties
-└── utils/           # Formatters, constants, and date helpers
+expenz/
+├── backend/
+│   └── server.js        # Express API: auth, expenses, budget (in-memory data)
+└── src/
+    ├── api/             # Axios client and API functions (auth, expenses, budget)
+    ├── components/      # budget/, charts/, common/, expenses/, layout/
+    ├── context/         # Auth, Toast, Filter, Expense and Budget providers
+    ├── hooks/           # useFilteredExpenses, useExpenseStats, useExpenseModal
+    ├── pages/           # Dashboard, Expenses, Budget, auth pages, 404
+    ├── styles/          # Global CSS and design tokens
+    └── utils/           # Constants, currency and date helpers, error helper
 ```
 
----
+## Known limitations
 
-## 📄 License
+- Data is **not persistent**: the backend uses in-memory arrays, so a restart deletes all accounts and expenses. A real database is the next step.
+- The monthly budget is stored in the browser (`localStorage`, per user), not on the server.
+- There is no automated test suite yet.
 
-This project is open-source and available under the [MIT License](LICENSE).Have a Look
+## License
+
+Released under the [MIT License](LICENSE).
