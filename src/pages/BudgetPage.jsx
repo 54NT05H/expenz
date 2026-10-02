@@ -20,7 +20,15 @@ export const BudgetPage = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '1rem',
+        }}
+      >
         <div>
           <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.03em' }}>
             Budget Planner & Limits
@@ -84,7 +92,16 @@ export const BudgetPage = () => {
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <span
+                    style={{
+                      fontWeight: 600,
+                      fontSize: '0.9rem',
+                      color: 'var(--text-primary)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.4rem',
+                    }}
+                  >
                     <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: cat.color }} />
                     {cat.label}
                   </span>
@@ -93,7 +110,15 @@ export const BudgetPage = () => {
                   </span>
                 </div>
 
-                <div style={{ width: '100%', height: '7px', background: '#e2e8f0', borderRadius: '9999px', overflow: 'hidden' }}>
+                <div
+                  style={{
+                    width: '100%',
+                    height: '7px',
+                    background: '#e2e8f0',
+                    borderRadius: '9999px',
+                    overflow: 'hidden',
+                  }}
+                >
                   <div
                     style={{
                       width: `${Math.min(percentageOfBudget, 100)}%`,
@@ -105,9 +130,18 @@ export const BudgetPage = () => {
                   />
                 </div>
 
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', justifyContent: 'space-between' }}>
+                <div
+                  style={{
+                    fontSize: '0.75rem',
+                    color: 'var(--text-muted)',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                  }}
+                >
                   <span>{percentageOfBudget}% of current budget limit</span>
-                  <span style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>{formatCurrency(Math.max(0, budgetLimit - catSpent))} remaining</span>
+                  <span style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>
+                    {formatCurrency(Math.max(0, budgetLimit - catSpent))} remaining
+                  </span>
                 </div>
               </div>
             );
@@ -116,13 +150,30 @@ export const BudgetPage = () => {
       </div>
 
       {/* Smart Insights & Tips */}
-      <div className="glass-card" style={{ background: 'linear-gradient(135deg, rgba(79, 70, 229, 0.06) 0%, rgba(6, 182, 212, 0.04) 100%)', border: '1px solid rgba(79, 70, 229, 0.18)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.75rem', color: 'var(--accent-primary)' }}>
+      <div
+        className="glass-card"
+        style={{
+          background: 'linear-gradient(135deg, rgba(79, 70, 229, 0.06) 0%, rgba(6, 182, 212, 0.04) 100%)',
+          border: '1px solid rgba(79, 70, 229, 0.18)',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.6rem',
+            marginBottom: '0.75rem',
+            color: 'var(--accent-primary)',
+          }}
+        >
           <Sparkles size={20} />
           <h4 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>50/30/20 Budgeting Rule</h4>
         </div>
         <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-          For a monthly budget of <strong>{formatCurrency(budgetLimit)}</strong>, aim to spend no more than <strong>{formatCurrency(budgetLimit * 0.5)}</strong> on Needs, <strong>{formatCurrency(budgetLimit * 0.3)}</strong> on Wants, and save at least <strong>{formatCurrency(budgetLimit * 0.2)}</strong>.
+          For a monthly budget of <strong>{formatCurrency(budgetLimit)}</strong>, aim to spend no more than{' '}
+          <strong>{formatCurrency(budgetLimit * 0.5)}</strong> on Needs,{' '}
+          <strong>{formatCurrency(budgetLimit * 0.3)}</strong> on Wants, and save at least{' '}
+          <strong>{formatCurrency(budgetLimit * 0.2)}</strong>.
         </p>
       </div>
 

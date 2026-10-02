@@ -4,26 +4,31 @@ import { EXPENSE_CATEGORIES } from '../../utils/constants';
 import { Search, Filter, Calendar } from 'lucide-react';
 
 export const ExpenseFilters = () => {
-  const {
-    searchQuery,
-    setSearchQuery,
-    selectedCategory,
-    setSelectedCategory,
-    selectedMonth,
-    setSelectedMonth,
-  } = useFilters();
+  const { searchQuery, setSearchQuery, selectedCategory, setSelectedCategory, selectedMonth, setSelectedMonth } =
+    useFilters();
 
   return (
     <div className="glass-card" style={{ padding: '1rem', marginBottom: '1.5rem' }}>
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-        gap: '1rem',
-        alignItems: 'center',
-      }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '1rem',
+          alignItems: 'center',
+        }}
+      >
         {/* Search */}
         <div style={{ position: 'relative' }}>
-          <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+          <Search
+            size={18}
+            style={{
+              position: 'absolute',
+              left: '12px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              color: 'var(--text-muted)',
+            }}
+          />
           <input
             type="text"
             className="form-input"
@@ -36,7 +41,17 @@ export const ExpenseFilters = () => {
 
         {/* Category Filter */}
         <div style={{ position: 'relative' }}>
-          <Filter size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none' }} />
+          <Filter
+            size={18}
+            style={{
+              position: 'absolute',
+              left: '12px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              color: 'var(--text-muted)',
+              pointerEvents: 'none',
+            }}
+          />
           <select
             className="form-select"
             style={{ paddingLeft: '2.5rem' }}
@@ -54,7 +69,17 @@ export const ExpenseFilters = () => {
 
         {/* Month Selector */}
         <div style={{ position: 'relative' }}>
-          <Calendar size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none' }} />
+          <Calendar
+            size={18}
+            style={{
+              position: 'absolute',
+              left: '12px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              color: 'var(--text-muted)',
+              pointerEvents: 'none',
+            }}
+          />
           <input
             type="month"
             className="form-input"

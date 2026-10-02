@@ -43,23 +43,28 @@ A modern, responsive, and feature-packed **Expense Tracker with Budgeting** fron
 ## 🚀 Getting Started
 
 ### 1. Clone the repository
+
 ```bash
 https://github.com/54NT05H/expenz.git
 cd Expenz
 ```
 
 ### 2. Install dependencies
+
 ```bash
 npm install
 ```
 
 ### 3. Start development server
+
 ```bash
 npm run dev
 ```
+
 Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ### 4. Build for production
+
 ```bash
 npm run build
 ```
@@ -86,4 +91,5 @@ src/
 ---
 
 ## 📄 License
+
 This project is open-source and available under the [MIT License](LICENSE).Have a Look

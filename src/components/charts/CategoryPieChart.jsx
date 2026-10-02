@@ -7,19 +7,19 @@ const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     const data = payload[0];
     return (
-      <div style={{
-        background: '#ffffff',
-        border: '1px solid var(--border-color)',
-        padding: '0.65rem 0.9rem',
-        borderRadius: 'var(--radius-md)',
-        boxShadow: 'var(--shadow-md)',
-      }}>
+      <div
+        style={{
+          background: '#ffffff',
+          border: '1px solid var(--border-color)',
+          padding: '0.65rem 0.9rem',
+          borderRadius: 'var(--radius-md)',
+          boxShadow: 'var(--shadow-md)',
+        }}
+      >
         <p style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--text-primary)', marginBottom: '0.2rem' }}>
           {data.name}
         </p>
-        <p style={{ fontSize: '0.875rem', color: data.payload.fill, fontWeight: 700 }}>
-          {formatCurrency(data.value)}
-        </p>
+        <p style={{ fontSize: '0.875rem', color: data.payload.fill, fontWeight: 700 }}>{formatCurrency(data.value)}</p>
       </div>
     );
   }
@@ -29,7 +29,15 @@ const CustomTooltip = ({ active, payload }) => {
 export const CategoryPieChart = ({ data = [] }) => {
   if (!data || data.length === 0) {
     return (
-      <div style={{ height: '280px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
+      <div
+        style={{
+          height: '280px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'var(--text-muted)',
+        }}
+      >
         No expense data to display for this period.
       </div>
     );
@@ -41,15 +49,7 @@ export const CategoryPieChart = ({ data = [] }) => {
     <div style={{ width: '100%', height: '300px' }}>
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
-          <Pie
-            data={data}
-            cx="50%"
-            cy="50%"
-            innerRadius={68}
-            outerRadius={108}
-            paddingAngle={3}
-            dataKey="value"
-          >
+          <Pie data={data} cx="50%" cy="50%" innerRadius={68} outerRadius={108} paddingAngle={3} dataKey="value">
             {data.map((entry, index) => {
               const fillColor = CATEGORY_COLOR_MAP[entry.name] || defaultColors[index % defaultColors.length];
               return <Cell key={`cell-${index}`} fill={fillColor} stroke="#ffffff" strokeWidth={3} />;
@@ -59,7 +59,9 @@ export const CategoryPieChart = ({ data = [] }) => {
           <Legend
             verticalAlign="bottom"
             height={36}
-            formatter={(value) => <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', fontWeight: 600 }}>{value}</span>}
+            formatter={(value) => (
+              <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', fontWeight: 600 }}>{value}</span>
+            )}
           />
         </PieChart>
       </ResponsiveContainer>

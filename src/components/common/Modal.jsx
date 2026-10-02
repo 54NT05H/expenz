@@ -21,13 +21,15 @@ export const Modal = ({ isOpen, onClose, title, children }) => {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-container" onClick={(e) => e.stopPropagation()}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '1.25rem 1.5rem',
-          borderBottom: '1px solid var(--border-color)',
-        }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '1.25rem 1.5rem',
+            borderBottom: '1px solid var(--border-color)',
+          }}
+        >
           <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)' }}>{title}</h3>
           <button
             onClick={onClose}

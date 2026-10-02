@@ -37,27 +37,34 @@ export const RegisterPage = () => {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '1.5rem',
-      backgroundColor: 'var(--bg-primary)',
-    }}>
-      <div className="glass-card" style={{ width: '100%', maxWidth: '440px', padding: '2.5rem', boxShadow: 'var(--shadow-lg)' }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '1.5rem',
+        backgroundColor: 'var(--bg-primary)',
+      }}
+    >
+      <div
+        className="glass-card"
+        style={{ width: '100%', maxWidth: '440px', padding: '2.5rem', boxShadow: 'var(--shadow-lg)' }}
+      >
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <div style={{
-            width: '52px',
-            height: '52px',
-            borderRadius: '16px',
-            background: 'var(--accent-gradient)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            margin: '0 auto 1.25rem',
-            boxShadow: '0 8px 20px rgba(79, 70, 229, 0.3)',
-          }}>
+          <div
+            style={{
+              width: '52px',
+              height: '52px',
+              borderRadius: '16px',
+              background: 'var(--accent-gradient)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1.25rem',
+              boxShadow: '0 8px 20px rgba(79, 70, 229, 0.3)',
+            }}
+          >
             <Wallet size={28} color="#ffffff" />
           </div>
           <h2 style={{ fontSize: '1.65rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.03em' }}>
@@ -69,7 +76,17 @@ export const RegisterPage = () => {
         </div>
 
         {error && (
-          <div style={{ padding: '0.75rem 1rem', marginBottom: '1.25rem', borderRadius: 'var(--radius-md)', background: 'var(--danger-bg)', color: 'var(--danger)', fontSize: '0.85rem', fontWeight: 500 }}>
+          <div
+            style={{
+              padding: '0.75rem 1rem',
+              marginBottom: '1.25rem',
+              borderRadius: 'var(--radius-md)',
+              background: 'var(--danger-bg)',
+              color: 'var(--danger)',
+              fontSize: '0.85rem',
+              fontWeight: 500,
+            }}
+          >
             {error}
           </div>
         )}
@@ -78,7 +95,16 @@ export const RegisterPage = () => {
           <div className="form-group">
             <label className="form-label">Full Name</label>
             <div style={{ position: 'relative' }}>
-              <User size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+              <User
+                size={18}
+                style={{
+                  position: 'absolute',
+                  left: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: 'var(--text-muted)',
+                }}
+              />
               <input
                 type="text"
                 required
@@ -94,7 +120,16 @@ export const RegisterPage = () => {
           <div className="form-group">
             <label className="form-label">Email Address</label>
             <div style={{ position: 'relative' }}>
-              <Mail size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+              <Mail
+                size={18}
+                style={{
+                  position: 'absolute',
+                  left: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: 'var(--text-muted)',
+                }}
+              />
               <input
                 type="email"
                 required
@@ -110,7 +145,16 @@ export const RegisterPage = () => {
           <div className="form-group">
             <label className="form-label">Password (6+ chars)</label>
             <div style={{ position: 'relative' }}>
-              <Lock size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+              <Lock
+                size={18}
+                style={{
+                  position: 'absolute',
+                  left: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: 'var(--text-muted)',
+                }}
+              />
               <input
                 type="password"
                 required
@@ -140,7 +184,19 @@ export const RegisterPage = () => {
           </Link>
         </div>
 
-        <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+        <div
+          style={{
+            marginTop: '1.5rem',
+            paddingTop: '1.25rem',
+            borderTop: '1px solid var(--border-color)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.4rem',
+            fontSize: '0.75rem',
+            color: 'var(--text-muted)',
+          }}
+        >
           <ShieldCheck size={16} color="var(--success)" /> Password hashed with Bcrypt before storage
         </div>
       </div>

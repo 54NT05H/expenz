@@ -21,7 +21,19 @@ export const ExpenseTable = ({ onEditExpense }) => {
   if (expenses.length === 0) {
     return (
       <div className="glass-card" style={{ padding: '3rem', textAlign: 'center' }}>
-        <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 0.75rem', color: 'var(--text-muted)' }}>
+        <div
+          style={{
+            width: '48px',
+            height: '48px',
+            borderRadius: '50%',
+            background: '#f8fafc',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 0.75rem',
+            color: 'var(--text-muted)',
+          }}
+        >
           <Receipt size={24} />
         </div>
         <h4 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>
@@ -39,7 +51,13 @@ export const ExpenseTable = ({ onEditExpense }) => {
       <div style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
           <thead>
-            <tr style={{ background: '#f8fafc', borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)' }}>
+            <tr
+              style={{
+                background: '#f8fafc',
+                borderBottom: '1px solid var(--border-color)',
+                color: 'var(--text-secondary)',
+              }}
+            >
               <th style={{ padding: '1rem 1.25rem', fontWeight: 600 }}>Title & Notes</th>
               <th style={{ padding: '1rem 1.25rem', fontWeight: 600 }}>Category</th>
               <th style={{ padding: '1rem 1.25rem', fontWeight: 600 }}>Date</th>
@@ -71,9 +89,7 @@ export const ExpenseTable = ({ onEditExpense }) => {
                   <td style={{ padding: '1rem 1.25rem' }}>
                     <CategoryBadge category={exp.category} />
                   </td>
-                  <td style={{ padding: '1rem 1.25rem', color: 'var(--text-secondary)' }}>
-                    {formatDate(exp.date)}
-                  </td>
+                  <td style={{ padding: '1rem 1.25rem', color: 'var(--text-secondary)' }}>{formatDate(exp.date)}</td>
                   <td style={{ padding: '1rem 1.25rem', textAlign: 'right', fontWeight: 700, color: '#e11d48' }}>
                     - {formatCurrency(exp.amount)}
                   </td>

@@ -11,8 +11,8 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 
-app.get("/", (req, res) => {
-    res.send("Expenz Backend Running Successfully");
+app.get('/', (req, res) => {
+  res.send('Expenz Backend Running Successfully');
 });
 app.use(
   cors({
@@ -45,21 +45,125 @@ const monthKey = (monthsAgo) => {
 
 const expenses = [
   // This month
-  { id: '1', userId: 'demo-1', title: 'Whole Foods Grocery', amount: 3450, category: 'Food & Dining', date: `${monthKey(0)}-03`, notes: 'Weekly groceries' },
-  { id: '2', userId: 'demo-1', title: 'Monthly Metro Pass', amount: 1200, category: 'Transportation', date: `${monthKey(0)}-02`, notes: 'Commute' },
-  { id: '3', userId: 'demo-1', title: 'Electricity & Water Bill', amount: 2800, category: 'Bills & Utilities', date: `${monthKey(0)}-01`, notes: 'Monthly bill' },
-  { id: '4', userId: 'demo-1', title: 'Apartment Rent', amount: 22000, category: 'Housing & Rent', date: `${monthKey(0)}-01`, notes: 'Monthly rent' },
-  { id: '5', userId: 'demo-1', title: 'Cinema & Dinner', amount: 1850, category: 'Entertainment', date: `${monthKey(0)}-03`, notes: 'Weekend outing' },
-  { id: '6', userId: 'demo-1', title: 'Wireless Headphones', amount: 4999, category: 'Shopping', date: `${monthKey(0)}-02`, notes: 'Noise cancelling' },
-  { id: '7', userId: 'demo-1', title: 'Gym Membership', amount: 2500, category: 'Healthcare & Fitness', date: `${monthKey(0)}-02`, notes: 'Quarterly renew' },
+  {
+    id: '1',
+    userId: 'demo-1',
+    title: 'Whole Foods Grocery',
+    amount: 3450,
+    category: 'Food & Dining',
+    date: `${monthKey(0)}-03`,
+    notes: 'Weekly groceries',
+  },
+  {
+    id: '2',
+    userId: 'demo-1',
+    title: 'Monthly Metro Pass',
+    amount: 1200,
+    category: 'Transportation',
+    date: `${monthKey(0)}-02`,
+    notes: 'Commute',
+  },
+  {
+    id: '3',
+    userId: 'demo-1',
+    title: 'Electricity & Water Bill',
+    amount: 2800,
+    category: 'Bills & Utilities',
+    date: `${monthKey(0)}-01`,
+    notes: 'Monthly bill',
+  },
+  {
+    id: '4',
+    userId: 'demo-1',
+    title: 'Apartment Rent',
+    amount: 22000,
+    category: 'Housing & Rent',
+    date: `${monthKey(0)}-01`,
+    notes: 'Monthly rent',
+  },
+  {
+    id: '5',
+    userId: 'demo-1',
+    title: 'Cinema & Dinner',
+    amount: 1850,
+    category: 'Entertainment',
+    date: `${monthKey(0)}-03`,
+    notes: 'Weekend outing',
+  },
+  {
+    id: '6',
+    userId: 'demo-1',
+    title: 'Wireless Headphones',
+    amount: 4999,
+    category: 'Shopping',
+    date: `${monthKey(0)}-02`,
+    notes: 'Noise cancelling',
+  },
+  {
+    id: '7',
+    userId: 'demo-1',
+    title: 'Gym Membership',
+    amount: 2500,
+    category: 'Healthcare & Fitness',
+    date: `${monthKey(0)}-02`,
+    notes: 'Quarterly renew',
+  },
 
   // Older months, so the bar chart has something to show
-  { id: '8', userId: 'demo-1', title: 'Apartment Rent', amount: 22000, category: 'Housing & Rent', date: `${monthKey(1)}-01`, notes: 'Monthly rent' },
-  { id: '9', userId: 'demo-1', title: 'Groceries', amount: 9800, category: 'Food & Dining', date: `${monthKey(1)}-15`, notes: '' },
-  { id: '10', userId: 'demo-1', title: 'Apartment Rent', amount: 22000, category: 'Housing & Rent', date: `${monthKey(2)}-01`, notes: 'Monthly rent' },
-  { id: '11', userId: 'demo-1', title: 'Weekend Trip', amount: 14500, category: 'Entertainment', date: `${monthKey(2)}-18`, notes: '' },
-  { id: '12', userId: 'demo-1', title: 'Apartment Rent', amount: 22000, category: 'Housing & Rent', date: `${monthKey(3)}-01`, notes: 'Monthly rent' },
-  { id: '13', userId: 'demo-1', title: 'Online Course', amount: 6500, category: 'Education', date: `${monthKey(3)}-12`, notes: '' },
+  {
+    id: '8',
+    userId: 'demo-1',
+    title: 'Apartment Rent',
+    amount: 22000,
+    category: 'Housing & Rent',
+    date: `${monthKey(1)}-01`,
+    notes: 'Monthly rent',
+  },
+  {
+    id: '9',
+    userId: 'demo-1',
+    title: 'Groceries',
+    amount: 9800,
+    category: 'Food & Dining',
+    date: `${monthKey(1)}-15`,
+    notes: '',
+  },
+  {
+    id: '10',
+    userId: 'demo-1',
+    title: 'Apartment Rent',
+    amount: 22000,
+    category: 'Housing & Rent',
+    date: `${monthKey(2)}-01`,
+    notes: 'Monthly rent',
+  },
+  {
+    id: '11',
+    userId: 'demo-1',
+    title: 'Weekend Trip',
+    amount: 14500,
+    category: 'Entertainment',
+    date: `${monthKey(2)}-18`,
+    notes: '',
+  },
+  {
+    id: '12',
+    userId: 'demo-1',
+    title: 'Apartment Rent',
+    amount: 22000,
+    category: 'Housing & Rent',
+    date: `${monthKey(3)}-01`,
+    notes: 'Monthly rent',
+  },
+  {
+    id: '13',
+    userId: 'demo-1',
+    title: 'Online Course',
+    amount: 6500,
+    category: 'Education',
+    date: `${monthKey(3)}-12`,
+    notes: '',
+  },
 ];
 
 const budgets = [{ userId: 'demo-1', month: '2026-09', limit: 50000 }];
@@ -114,9 +218,7 @@ app.post('/api/auth/register', async (req, res) => {
       return res.status(400).json({ message: 'Password must be at least 6 characters' });
     }
 
-    const existingUser = users.find(
-      (user) => user.email.toLowerCase() === String(email).toLowerCase()
-    );
+    const existingUser = users.find((user) => user.email.toLowerCase() === String(email).toLowerCase());
     if (existingUser) {
       return res.status(409).json({ message: 'User already exists' });
     }
@@ -150,9 +252,7 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(400).json({ message: 'Email and password are required' });
     }
 
-    const user = users.find(
-      (item) => item.email.toLowerCase() === String(email).toLowerCase()
-    );
+    const user = users.find((item) => item.email.toLowerCase() === String(email).toLowerCase());
 
     // Same message for "no such user" and "wrong password" on purpose:
     // it doesn't tell an attacker which emails exist.
@@ -227,8 +327,7 @@ app.get('/api/expenses', authMiddleware, (req, res) => {
     const value = String(search).toLowerCase();
     filteredExpenses = filteredExpenses.filter(
       (expense) =>
-        expense.title.toLowerCase().includes(value) ||
-        (expense.notes && expense.notes.toLowerCase().includes(value))
+        expense.title.toLowerCase().includes(value) || (expense.notes && expense.notes.toLowerCase().includes(value))
     );
   }
 
@@ -261,9 +360,7 @@ app.post('/api/expenses', authMiddleware, (req, res) => {
 });
 
 app.put('/api/expenses/:id', authMiddleware, (req, res) => {
-  const index = expenses.findIndex(
-    (expense) => expense.id === req.params.id && expense.userId === req.user.id
-  );
+  const index = expenses.findIndex((expense) => expense.id === req.params.id && expense.userId === req.user.id);
 
   if (index === -1) {
     return res.status(404).json({ message: 'Expense not found' });
@@ -301,9 +398,7 @@ app.put('/api/expenses/:id', authMiddleware, (req, res) => {
 });
 
 app.delete('/api/expenses/:id', authMiddleware, (req, res) => {
-  const index = expenses.findIndex(
-    (expense) => expense.id === req.params.id && expense.userId === req.user.id
-  );
+  const index = expenses.findIndex((expense) => expense.id === req.params.id && expense.userId === req.user.id);
 
   if (index === -1) {
     return res.status(404).json({ message: 'Expense not found' });
@@ -360,9 +455,7 @@ app.post('/api/budget', authMiddleware, (req, res) => {
     return res.status(400).json({ message: 'Budget limit is required' });
   }
 
-  const existingBudget = budgets.find(
-    (item) => item.userId === req.user.id && item.month === month
-  );
+  const existingBudget = budgets.find((item) => item.userId === req.user.id && item.month === month);
 
   if (existingBudget) {
     existingBudget.limit = Number(limit);

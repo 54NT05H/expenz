@@ -24,7 +24,7 @@ export const SetBudgetModal = ({ isOpen, onClose, currentBudget, onSave }) => {
     try {
       setSubmitting(true);
       const saved = await onSave(num);
-      if (saved) onClose();   // on failure, stay open so the user can retry
+      if (saved) onClose(); // on failure, stay open so the user can retry
     } finally {
       setSubmitting(false);
     }
@@ -102,7 +102,12 @@ export const SetBudgetModal = ({ isOpen, onClose, currentBudget, onSave }) => {
           <button type="button" onClick={onClose} className="btn btn-secondary">
             Cancel
           </button>
-          <button type="submit" disabled={submitting} className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <button
+            type="submit"
+            disabled={submitting}
+            className="btn btn-primary"
+            style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+          >
             <Check size={16} />
             {submitting ? 'Updating...' : 'Save & Update'}
           </button>

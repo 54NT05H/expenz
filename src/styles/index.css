@@ -79,7 +79,10 @@ a {
   text-decoration: none;
 }
 
-button, input, select, textarea {
+button,
+input,
+select,
+textarea {
   font-family: inherit;
 }
 
@@ -225,7 +228,8 @@ button, input, select, textarea {
   color: var(--text-secondary);
 }
 
-.form-input, .form-select {
+.form-input,
+.form-select {
   width: 100%;
   padding: 0.7rem 1rem;
   background-color: var(--bg-input);
@@ -234,10 +238,14 @@ button, input, select, textarea {
   color: var(--text-primary);
   font-size: 0.925rem;
   outline: none;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background-color var(--transition-fast);
 }
 
-.form-input:focus, .form-select:focus {
+.form-input:focus,
+.form-select:focus {
   background-color: #ffffff;
   border-color: var(--accent-primary);
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
@@ -343,14 +351,29 @@ button, input, select, textarea {
   animation: toastIn 0.2s ease;
 }
 
-.toast-success { border-left-color: var(--success); }
-.toast-success .toast-icon { color: var(--success); }
-.toast-error { border-left-color: var(--danger); }
-.toast-error .toast-icon { color: var(--danger); }
-.toast-info { border-left-color: var(--info); }
-.toast-info .toast-icon { color: var(--info); }
+.toast-success {
+  border-left-color: var(--success);
+}
+.toast-success .toast-icon {
+  color: var(--success);
+}
+.toast-error {
+  border-left-color: var(--danger);
+}
+.toast-error .toast-icon {
+  color: var(--danger);
+}
+.toast-info {
+  border-left-color: var(--info);
+}
+.toast-info .toast-icon {
+  color: var(--info);
+}
 
-.toast-icon { flex-shrink: 0; margin-top: 1px; }
+.toast-icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
 
 .toast-close {
   margin-left: auto;
@@ -360,9 +383,17 @@ button, input, select, textarea {
   cursor: pointer;
   padding: 0.1rem;
 }
-.toast-close:hover { color: var(--text-primary); }
+.toast-close:hover {
+  color: var(--text-primary);
+}
 
 @keyframes toastIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

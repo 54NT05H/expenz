@@ -68,7 +68,16 @@ export const ExpenseFormModal = ({ isOpen, onClose, onSubmit, initialData = null
     <Modal isOpen={isOpen} onClose={onClose} title={isEditMode ? 'Edit Expense' : 'Add New Expense'}>
       <form onSubmit={handleSubmit}>
         {error && (
-          <div style={{ padding: '0.75rem', marginBottom: '1rem', borderRadius: 'var(--radius-md)', background: 'var(--danger-bg)', color: 'var(--danger)', fontSize: '0.85rem' }}>
+          <div
+            style={{
+              padding: '0.75rem',
+              marginBottom: '1rem',
+              borderRadius: 'var(--radius-md)',
+              background: 'var(--danger-bg)',
+              color: 'var(--danger)',
+              fontSize: '0.85rem',
+            }}
+          >
             {error}
           </div>
         )}
@@ -117,12 +126,7 @@ export const ExpenseFormModal = ({ isOpen, onClose, onSubmit, initialData = null
 
         <div className="form-group">
           <label className="form-label">Category *</label>
-          <select
-            name="category"
-            className="form-select"
-            value={formData.category}
-            onChange={handleChange}
-          >
+          <select name="category" className="form-select" value={formData.category} onChange={handleChange}>
             {EXPENSE_CATEGORIES.map((cat) => (
               <option key={cat.id} value={cat.label}>
                 {cat.label}

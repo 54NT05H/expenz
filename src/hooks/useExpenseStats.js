@@ -27,14 +27,11 @@ export const useExpenseStats = () => {
   }, [allExpenses, budgetLimit]);
 
   return useMemo(() => {
-    const monthExpenses = allExpenses.filter((e) =>
-      selectedMonth ? e.date?.startsWith(selectedMonth) : true
-    );
+    const monthExpenses = allExpenses.filter((e) => (selectedMonth ? e.date?.startsWith(selectedMonth) : true));
 
     const totalSpent = monthExpenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
     const remainingBudget = budgetLimit - totalSpent;
-    const percentageUsed =
-      budgetLimit > 0 ? Math.min(Math.round((totalSpent / budgetLimit) * 100), 100) : 0;
+    const percentageUsed = budgetLimit > 0 ? Math.min(Math.round((totalSpent / budgetLimit) * 100), 100) : 0;
 
     const categoryTotals = {};
     monthExpenses.forEach((exp) => {

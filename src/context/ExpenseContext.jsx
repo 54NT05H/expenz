@@ -35,8 +35,7 @@ export const ExpenseProvider = ({ children }) => {
     Object.keys(localStorage)
       .filter(
         (key) =>
-          key.startsWith('expenz_expenses_') ||
-          ['fintrack_expenses', 'fintrack_budget', 'fintrack_user'].includes(key)
+          key.startsWith('expenz_expenses_') || ['fintrack_expenses', 'fintrack_budget', 'fintrack_user'].includes(key)
       )
       .forEach((key) => localStorage.removeItem(key));
   }, []);
@@ -65,9 +64,7 @@ export const ExpenseProvider = ({ children }) => {
     async (id, expenseData) => {
       try {
         const data = await expenseApi.updateExpense(id, expenseData);
-        setAllExpenses((prev) =>
-          prev.map((item) => (String(item.id) === String(id) ? data.expense : item))
-        );
+        setAllExpenses((prev) => prev.map((item) => (String(item.id) === String(id) ? data.expense : item)));
         toast.success('Expense updated');
       } catch (error) {
         throw new Error(getErrorMessage(error, 'Could not update the expense.'));

@@ -23,11 +23,25 @@ export const BudgetProgressCard = () => {
       <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-            <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(79, 70, 229, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary)', border: '1px solid rgba(79, 70, 229, 0.2)' }}>
+            <div
+              style={{
+                width: '38px',
+                height: '38px',
+                borderRadius: '10px',
+                background: 'rgba(79, 70, 229, 0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'var(--accent-primary)',
+                border: '1px solid rgba(79, 70, 229, 0.2)',
+              }}
+            >
               <Target size={20} />
             </div>
             <div>
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)' }}>Monthly Budget Tracker</h3>
+              <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                Monthly Budget Tracker
+              </h3>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Target allowance vs actual expenditure</p>
             </div>
           </div>
@@ -43,28 +57,32 @@ export const BudgetProgressCard = () => {
         </div>
 
         <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.6rem' }}>
+          <div
+            style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.6rem' }}
+          >
             <div>
-              <span style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
+              <span
+                style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}
+              >
                 {formatCurrency(totalSpent)}
               </span>
               <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginLeft: '0.45rem' }}>
                 of {formatCurrency(budgetLimit)}
               </span>
             </div>
-            <span style={{ fontSize: '0.95rem', fontWeight: 800, color: getProgressColor() }}>
-              {percentageUsed}%
-            </span>
+            <span style={{ fontSize: '0.95rem', fontWeight: 800, color: getProgressColor() }}>{percentageUsed}%</span>
           </div>
 
           {/* Progress Bar Track */}
-          <div style={{
-            width: '100%',
-            height: '10px',
-            backgroundColor: '#f1f5f9',
-            borderRadius: '9999px',
-            overflow: 'hidden',
-          }}>
+          <div
+            style={{
+              width: '100%',
+              height: '10px',
+              backgroundColor: '#f1f5f9',
+              borderRadius: '9999px',
+              overflow: 'hidden',
+            }}
+          >
             <div
               style={{
                 width: `${Math.min(percentageUsed, 100)}%`,
@@ -77,7 +95,16 @@ export const BudgetProgressCard = () => {
           </div>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.75rem', borderTop: '1px solid var(--border-color)', fontSize: '0.85rem' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingTop: '0.75rem',
+            borderTop: '1px solid var(--border-color)',
+            fontSize: '0.85rem',
+          }}
+        >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             {isOverBudget ? (
               <span style={{ color: '#ef4444', display: 'flex', alignItems: 'center', gap: '0.3rem', fontWeight: 600 }}>
@@ -89,9 +116,7 @@ export const BudgetProgressCard = () => {
               </span>
             )}
           </div>
-          <span style={{ color: 'var(--text-muted)', fontWeight: 500 }}>
-            {stats.expenseCount} transactions logged
-          </span>
+          <span style={{ color: 'var(--text-muted)', fontWeight: 500 }}>{stats.expenseCount} transactions logged</span>
         </div>
       </div>
 

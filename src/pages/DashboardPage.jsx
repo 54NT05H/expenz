@@ -28,7 +28,15 @@ export const DashboardPage = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {/* Header section */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '1rem',
+        }}
+      >
         <div>
           <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
             Financial Overview
@@ -68,13 +76,19 @@ export const DashboardPage = () => {
           subtitle={`${stats.percentageUsed}% of budget utilized`}
           icon={TrendingDown}
           color="#ef4444"
-          badge={stats.isOverBudget ? { text: 'Over Budget', bg: 'rgba(239, 68, 68, 0.2)', color: '#f87171' } : { text: 'On Track', bg: 'rgba(16, 185, 129, 0.2)', color: '#34d399' }}
+          badge={
+            stats.isOverBudget
+              ? { text: 'Over Budget', bg: 'rgba(239, 68, 68, 0.2)', color: '#f87171' }
+              : { text: 'On Track', bg: 'rgba(16, 185, 129, 0.2)', color: '#34d399' }
+          }
         />
 
         <StatCard
           title="Remaining Balance"
           value={formatCurrency(Math.max(0, stats.remainingBudget))}
-          subtitle={stats.isOverBudget ? `Exceeded by ${formatCurrency(Math.abs(stats.remainingBudget))}` : 'Available to spend'}
+          subtitle={
+            stats.isOverBudget ? `Exceeded by ${formatCurrency(Math.abs(stats.remainingBudget))}` : 'Available to spend'
+          }
           icon={DollarSign}
           color="#10b981"
         />
@@ -133,9 +147,7 @@ export const DashboardPage = () => {
       {/* Recent Transactions Section */}
       <div style={{ marginTop: '0.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-          <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-            Recent Transactions
-          </h3>
+          <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)' }}>Recent Transactions</h3>
           <Link to="/expenses" style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--accent-primary)' }}>
             View All & Filter →
           </Link>

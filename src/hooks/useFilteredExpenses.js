@@ -13,8 +13,7 @@ export const useFilteredExpenses = () => {
     return allExpenses.filter((item) => {
       const matchesCategory = selectedCategory === 'All' || item.category === selectedCategory;
       const matchesSearch =
-        item.title.toLowerCase().includes(query) ||
-        (item.notes && item.notes.toLowerCase().includes(query));
+        item.title.toLowerCase().includes(query) || (item.notes && item.notes.toLowerCase().includes(query));
       const matchesMonth = selectedMonth ? item.date?.startsWith(selectedMonth) : true;
       return matchesCategory && matchesSearch && matchesMonth;
     });

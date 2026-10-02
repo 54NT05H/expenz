@@ -10,16 +10,27 @@ export const Sidebar = () => {
   ];
 
   return (
-    <aside style={{
-      width: '240px',
-      backgroundColor: '#ffffff',
-      borderRight: '1px solid var(--border-color)',
-      padding: '1.5rem 1rem',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '0.4rem',
-    }}>
-      <div style={{ padding: '0 0.75rem 0.85rem 0.75rem', fontSize: '0.725rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.06em' }}>
+    <aside
+      style={{
+        width: '240px',
+        backgroundColor: '#ffffff',
+        borderRight: '1px solid var(--border-color)',
+        padding: '1.5rem 1rem',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '0.4rem',
+      }}
+    >
+      <div
+        style={{
+          padding: '0 0.75rem 0.85rem 0.75rem',
+          fontSize: '0.725rem',
+          fontWeight: 700,
+          textTransform: 'uppercase',
+          color: 'var(--text-muted)',
+          letterSpacing: '0.06em',
+        }}
+      >
         Navigation
       </div>
       {navItems.map((item) => {
@@ -48,8 +59,24 @@ export const Sidebar = () => {
         );
       })}
 
-      <div style={{ marginTop: 'auto', padding: '1rem', background: '#f8fafc', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.35rem', color: 'var(--accent-primary)' }}>
+      <div
+        style={{
+          marginTop: 'auto',
+          padding: '1rem',
+          background: '#f8fafc',
+          borderRadius: 'var(--radius-lg)',
+          border: '1px solid var(--border-color)',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.45rem',
+            marginBottom: '0.35rem',
+            color: 'var(--accent-primary)',
+          }}
+        >
           <ShieldCheck size={16} />
           <span style={{ fontSize: '0.775rem', fontWeight: 700 }}>Secure Sessions</span>
         </div>
