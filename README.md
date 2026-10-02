@@ -6,7 +6,7 @@ A modern, responsive, and feature-packed **Expense Tracker with Budgeting** fron
 
 ## 🌟 Key Features
 
-- 🔐 **Authentication Ready:** Integrated for JWT authentication with HTTP-only cookies and bcrypt-secured backend endpoints.
+- 🔐 **Authentication Ready:** Integrated for Session authentication with HTTP-only cookies and bcrypt-hashed passwords and bcrypt-secured backend endpoints.
 - ⚡ **Instant Demo Mode:** One-click demo login to test full functionality without waiting for a backend connection.
 - 📊 **Interactive Recharts Visualizations:**
   - **Expenses by Category:** Interactive donut/pie chart with custom tooltips and legend.

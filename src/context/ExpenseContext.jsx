@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useMemo } from '
 import { expenseApi } from '../api/expenseApi';
 import { budgetApi } from '../api/budgetApi';
 import { DEFAULT_BUDGET, EXPENSE_CATEGORIES } from '../utils/constants';
+import { useAuth } from './AuthContext';
 
 const ExpenseContext = createContext(null);
 
@@ -16,6 +17,7 @@ const INITIAL_EXPENSES = [
 ];
 
 export const ExpenseProvider = ({ children }) => {
+  const { user } = useAuth()
   const [expenses, setExpenses] = useState(() => {
     const saved = localStorage.getItem('fintrack_expenses');
     return saved ? JSON.parse(saved) : INITIAL_EXPENSES;
@@ -58,8 +60,12 @@ export const ExpenseProvider = ({ children }) => {
 };
 
 useEffect(() => {
-  loadExpenses();
-}, []);
+  if (user) {
+    loadExpenses();   // logged in → fetch this user's expenses
+  } else {
+    setExpenses([]);  // logged out → don't keep the previous user's data on screen
+  }
+}, [user?.id]);
 
   const addExpense = async (expenseData) => {
     try {

@@ -4,94 +4,63 @@ import { authApi } from '../api/authApi';
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem('fintrack_user');
-    return saved ? JSON.parse(saved) : { name: 'Demo User', email: 'demo@fintrack.io', id: 'demo-1' };
-  });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  // Nobody is logged in until the server confirms it.
+  const [user, setUser] = useState(null);
+  // true while we ask the server "is there a valid session?"
+  const [loading, setLoading] = useState(true);
 
-  // Check auth session on app mount
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const data = await authApi.getMe();
-        if (data && data.user) {
-          setUser(data.user);
-          localStorage.setItem('fintrack_user', JSON.stringify(data.user));
-        }
-      } catch (err) {
-        setUser(null);
-        localStorage.removeItem('fintrack_user');
-      }
-    };
+    let cancelled = false;
 
-    checkAuth();
+    authApi
+      .getMe()
+      .then((data) => {
+        if (!cancelled) setUser(data.user ?? null);
+      })
+      .catch(() => {
+        if (!cancelled) setUser(null);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
 
-    const handleUnauthorized = () => {
-      setUser(null);
-      localStorage.removeItem('fintrack_user');
-    };
-
+    // The axios interceptor fires this event when the server says 401.
+    const handleUnauthorized = () => setUser(null);
     window.addEventListener('auth:unauthorized', handleUnauthorized);
-    return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener('auth:unauthorized', handleUnauthorized);
+    };
   }, []);
 
+  // No try/catch here on purpose: if the server rejects, the error travels up
+  // to the page, which shows it to the user.
   const login = async (credentials) => {
-    setError(null);
-    try {
-      const data = await authApi.login(credentials);
-      const loggedUser = data.user || { name: credentials.email.split('@')[0], email: credentials.email, id: 'u1' };
-      setUser(loggedUser);
-      localStorage.setItem('fintrack_user', JSON.stringify(loggedUser));
-      return { success: true, user: loggedUser };
-    } catch (err) {
-      // Fallback for standalone/mock demonstration mode
-      const mockUser = { name: credentials.email.split('@')[0] || 'Demo User', email: credentials.email, id: 'demo-1' };
-      setUser(mockUser);
-      localStorage.setItem('fintrack_user', JSON.stringify(mockUser));
-      return { success: true, user: mockUser, isDemo: true };
-    }
+    const data = await authApi.login(credentials);
+    setUser(data.user);
+    return data.user;
   };
 
   const register = async (userData) => {
-    setError(null);
-    try {
-      const data = await authApi.register(userData);
-      const newUser = data.user || { name: userData.name, email: userData.email, id: 'u1' };
-      setUser(newUser);
-      localStorage.setItem('fintrack_user', JSON.stringify(newUser));
-      return { success: true, user: newUser };
-    } catch (err) {
-      const mockUser = { name: userData.name, email: userData.email, id: 'demo-1' };
-      setUser(mockUser);
-      localStorage.setItem('fintrack_user', JSON.stringify(mockUser));
-      return { success: true, user: mockUser, isDemo: true };
-    }
+    const data = await authApi.register(userData);
+    setUser(data.user);
+    return data.user;
   };
 
   const logout = async () => {
     try {
       await authApi.logout();
-    } catch (err) {
-      // Ignore network errors on logout
+    } catch {
+      // Even if the request fails, clear the local state.
     } finally {
       setUser(null);
-      localStorage.removeItem('fintrack_user');
     }
   };
 
   return (
     <AuthContext.Provider
-      value={{
-        user,
-        isAuthenticated: !!user,
-        loading,
-        error,
-        login,
-        register,
-        logout,
-      }}
+      value={{ user, isAuthenticated: !!user, loading, login, register, logout }}
     >
       {children}
     </AuthContext.Provider>

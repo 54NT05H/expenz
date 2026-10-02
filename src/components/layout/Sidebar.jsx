@@ -51,10 +51,10 @@ export const Sidebar = () => {
       <div style={{ marginTop: 'auto', padding: '1rem', background: '#f8fafc', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.35rem', color: 'var(--accent-primary)' }}>
           <ShieldCheck size={16} />
-          <span style={{ fontSize: '0.775rem', fontWeight: 700 }}>Secure JWT Auth</span>
+          <span style={{ fontSize: '0.775rem', fontWeight: 700 }}>Secure Sessions</span>
         </div>
         <p style={{ fontSize: '0.725rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>
-          HTTP-only cookies with Bcrypt password security.
+          HTTP-only cookies with bcrypt password hashing.
         </p>
       </div>
     </aside>

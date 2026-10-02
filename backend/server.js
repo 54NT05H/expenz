@@ -3,6 +3,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
+import bcrypt from 'bcryptjs';
 
 dotenv.config();
 
@@ -27,7 +28,8 @@ const users = [
     id: 'demo-1',
     name: 'Demo User',
     email: 'demo@fintrack.io',
-    password: 'demo123',
+    // hashSync = hash right now at startup. The 10 is the "cost": higher = slower = safer.
+    passwordHash: bcrypt.hashSync('demo123', 10),
   },
 ];
 
@@ -91,30 +93,32 @@ app.post('/api/auth/register', async (req, res) => {
     if (!name || !email || !password) {
       return res.status(400).json({ message: 'Name, email and password are required' });
     }
+    if (String(password).length < 6) {
+      return res.status(400).json({ message: 'Password must be at least 6 characters' });
+    }
 
-    const existingUser = users.find((user) => user.email.toLowerCase() === String(email).toLowerCase());
+    const existingUser = users.find(
+      (user) => user.email.toLowerCase() === String(email).toLowerCase()
+    );
     if (existingUser) {
       return res.status(409).json({ message: 'User already exists' });
     }
+
+    const passwordHash = await bcrypt.hash(String(password), 10);
 
     const newUser = {
       id: crypto.randomUUID(),
       name,
       email,
-      password,
+      passwordHash,
     };
 
     users.push(newUser);
-
     createSession(res, newUser.id);
 
     return res.status(201).json({
       success: true,
-      user: {
-        id: newUser.id,
-        name: newUser.name,
-        email: newUser.email,
-      },
+      user: { id: newUser.id, name: newUser.name, email: newUser.email },
     });
   } catch (error) {
     return res.status(500).json({ message: 'Registration failed' });
@@ -129,24 +133,26 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(400).json({ message: 'Email and password are required' });
     }
 
-    const user = users.find((item) => item.email.toLowerCase() === String(email).toLowerCase());
+    const user = users.find(
+      (item) => item.email.toLowerCase() === String(email).toLowerCase()
+    );
+
+    // Same message for "no such user" and "wrong password" on purpose:
+    // it doesn't tell an attacker which emails exist.
     if (!user) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    if (user.password !== password) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+    const isMatch = await bcrypt.compare(String(password), user.passwordHash);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
 
     createSession(res, user.id);
 
     return res.json({
       success: true,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-      },
+      user: { id: user.id, name: user.name, email: user.email },
     });
   } catch (error) {
     return res.status(500).json({ message: 'Login failed' });

@@ -3,6 +3,12 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Wallet, Lock, Mail, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react';
 
+const getErrorMessage = (err, fallback) => {
+  if (!err.response) return 'Cannot reach the server. Is the backend running?';
+  return err.response.data?.message || fallback;
+};
+
+
 export const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -14,34 +20,38 @@ export const LoginPage = () => {
   const location = useLocation();
   const from = location.state?.from?.pathname || '/dashboard';
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!email || !password) {
-      setError('Please enter both email and password.');
-      return;
-    }
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (!email || !password) {
+    setError('Please enter both email and password.');
+    return;
+  }
 
-    try {
-      setLoading(true);
-      setError('');
-      await login({ email, password });
-      navigate(from, { replace: true });
-    } catch (err) {
-      setError(err.response?.data?.message || 'Invalid email or password.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    setLoading(true);
+    setError('');
+    await login({ email, password });
+    navigate(from, { replace: true });
+  } catch (err) {
+    setError(getErrorMessage(err, 'Invalid email or password.'));
+  } finally {
+    setLoading(false);
+  }
+};
 
-  const handleDemoLogin = async () => {
-    try {
-      setLoading(true);
-      await login({ email: 'alex.demo@expenz.io', password: 'Password@123' });
-      navigate(from, { replace: true });
-    } finally {
-      setLoading(false);
-    }
-  };
+const handleDemoLogin = async () => {
+  try {
+    setLoading(true);
+    setError('');
+    // This account really exists in backend/server.js
+    await login({ email: 'demo@fintrack.io', password: 'demo123' });
+    navigate(from, { replace: true });
+  } catch (err) {
+    setError(getErrorMessage(err, 'Demo login failed.'));
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div style={{
@@ -143,7 +153,7 @@ export const LoginPage = () => {
         </div>
 
         <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-          <ShieldCheck size={16} color="var(--success)" /> Protected by HTTP-only JWT & Bcrypt Encryption
+          <ShieldCheck size={16} color="var(--success)" /> HTTP-only session cookie & bcrypt-hashed passwords
         </div>
       </div>
     </div>
