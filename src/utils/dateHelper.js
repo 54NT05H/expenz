@@ -15,5 +15,5 @@ export const getMonthYear = (date = new Date()) => {
 };
 
 export const getCurrentISODate = () => {
-  return new Date().toISOString().split('T')[0];
+  return format(new Date(), 'yyyy-MM-dd');
 };

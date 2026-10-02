@@ -15,9 +15,12 @@ const axiosClient = axios.create({
 axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    const isAuthFailure = error.config?.url?.includes('/auth/') || error.config?.url === '/auth/me';
+    const url = error.config?.url || '';
+    // A wrong password on the login/register form is also a 401,
+    // but that shouldn't count as "your session expired".
+    const isLoginAttempt = url.includes('/auth/login') || url.includes('/auth/register');
 
-    if (error.response?.status === 401 && isAuthFailure) {
+    if (error.response?.status === 401 && !isLoginAttempt) {
       window.dispatchEvent(new CustomEvent('auth:unauthorized'));
     }
 

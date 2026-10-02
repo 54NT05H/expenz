@@ -1,71 +1,90 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import { format, subMonths } from 'date-fns';
 import { expenseApi } from '../api/expenseApi';
 import { budgetApi } from '../api/budgetApi';
-import { DEFAULT_BUDGET, EXPENSE_CATEGORIES } from '../utils/constants';
 import { useAuth } from './AuthContext';
+import { DEFAULT_BUDGET } from '../utils/constants';;
 
 const ExpenseContext = createContext(null);
 
-const INITIAL_EXPENSES = [
-  { id: '1', title: 'Whole Foods Grocery', amount: 3450, category: 'Food & Dining', date: '2026-09-14', notes: 'Weekly groceries' },
-  { id: '2', title: 'Monthly Metro Pass', amount: 1200, category: 'Transportation', date: '2026-09-12', notes: 'Commute' },
-  { id: '3', title: 'Electricity & Water Bill', amount: 2800, category: 'Bills & Utilities', date: '2026-09-10', notes: 'August bill' },
-  { id: '4', title: 'Apartment Rent', amount: 22000, category: 'Housing & Rent', date: '2026-09-01', notes: 'Monthly rent' },
-  { id: '5', title: 'Cinema & Dinner', amount: 1850, category: 'Entertainment', date: '2026-09-08', notes: 'Weekend outing' },
-  { id: '6', title: 'Wireless Headphones', amount: 4999, category: 'Shopping', date: '2026-09-05', notes: 'Noise cancelling' },
-  { id: '7', title: 'Gym Membership', amount: 2500, category: 'Healthcare & Fitness', date: '2026-09-02', notes: 'Quarterly renew' },
-];
+
+
+// Every user gets their own storage keys, so accounts never see each other's cache.
+const expensesKey = (userId) => `expenz_expenses_${userId}`;
+const budgetKey = (userId) => `expenz_budget_${userId}`;
+
+const readCache = (key, fallback) => {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback; // corrupted data → ignore it
+  }
+};
 
 export const ExpenseProvider = ({ children }) => {
-  const { user } = useAuth()
-  const [expenses, setExpenses] = useState(() => {
-    const saved = localStorage.getItem('fintrack_expenses');
-    return saved ? JSON.parse(saved) : INITIAL_EXPENSES;
-  });
+  const { user } = useAuth();
+  const userId = user?.id;
 
-  const [budgetLimit, setBudgetLimit] = useState(() => {
-    const saved = localStorage.getItem('fintrack_budget');
-    return saved ? Number(saved) : DEFAULT_BUDGET;
-  });
+  const [expenses, setExpenses] = useState([]);
+  const [budgetLimit, setBudgetLimit] = useState(DEFAULT_BUDGET);
+  // Whose data is currently in `expenses` and `budgetLimit`?
+  // Stops us saving user A's data under user B's key during a switch.
+  const [dataOwner, setDataOwner] = useState(null);
 
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [selectedMonth, setSelectedMonth] = useState('2026-09');
-
-  // Save to local storage for persistent frontend state
-  useEffect(() => {
-    localStorage.setItem('fintrack_expenses', JSON.stringify(expenses));
-  }, [expenses]);
-
-  useEffect(() => {
-    localStorage.setItem('fintrack_budget', budgetLimit.toString());
-  }, [budgetLimit]);
-
-  // Load from backend if available
+  const [selectedMonth, setSelectedMonth] = useState(() => format(new Date(), 'yyyy-MM'));
 
   const loadExpenses = async () => {
-  try {
-    setLoading(true);
-    const data = await expenseApi.getAllExpenses();
-
-    if (Array.isArray(data)) {
-      setExpenses(data);
+    try {
+      setLoading(true);
+      const data = await expenseApi.getAllExpenses();
+      if (Array.isArray(data)) {
+        setExpenses(data);
+      }
+    } catch (error) {
+      console.error('Failed to load expenses:', error);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error('Failed to load expenses:', error);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
-useEffect(() => {
-  if (user) {
-    loadExpenses();   // logged in → fetch this user's expenses
-  } else {
-    setExpenses([]);  // logged out → don't keep the previous user's data on screen
-  }
-}, [user?.id]);
+  // One-time cleanup of the old shared keys that leaked between accounts.
+  useEffect(() => {
+    ['fintrack_expenses', 'fintrack_budget', 'fintrack_user'].forEach((key) =>
+      localStorage.removeItem(key)
+    );
+  }, []);
+
+  // Runs whenever the logged-in user changes (login, logout, switching accounts).
+  useEffect(() => {
+    if (!userId) {
+      // Logged out: wipe the screen state.
+      setExpenses([]);
+      setBudgetLimit(DEFAULT_BUDGET);
+      setDataOwner(null);
+      return;
+    }
+
+    // Logged in: show THIS user's cache instantly, then refresh from the server.
+    setExpenses(readCache(expensesKey(userId), []));
+    setBudgetLimit(Number(readCache(budgetKey(userId), DEFAULT_BUDGET)));
+    setDataOwner(userId);
+    loadExpenses();
+  }, [userId]);
+
+  // Save to THIS user's keys, but only if the data on screen really belongs to them.
+  useEffect(() => {
+    if (!userId || dataOwner !== userId) return;
+    localStorage.setItem(expensesKey(userId), JSON.stringify(expenses));
+  }, [expenses, userId, dataOwner]);
+
+  useEffect(() => {
+    if (!userId || dataOwner !== userId) return;
+    localStorage.setItem(budgetKey(userId), JSON.stringify(budgetLimit));
+  }, [budgetLimit, userId, dataOwner]);
 
   const addExpense = async (expenseData) => {
     try {
@@ -109,15 +128,14 @@ useEffect(() => {
   };
 
   const updateBudget = async (newLimit) => {
-    const numericLimit = Number(newLimit);
-    setBudgetLimit(numericLimit);
-    localStorage.setItem('fintrack_budget', numericLimit.toString());
-    try {
-      await budgetApi.setBudget({ limit: numericLimit, month: selectedMonth });
-    } catch {
-      // Keep local state update
-    }
-  };
+  const numericLimit = Number(newLimit);
+  setBudgetLimit(numericLimit); // the effect above saves it under this user's key
+  try {
+    await budgetApi.setBudget({ limit: numericLimit, month: selectedMonth });
+  } catch {
+    // Keep local state update
+  }
+};
 
   // Filtered Expenses
   const filteredExpenses = useMemo(() => {
@@ -132,30 +150,26 @@ useEffect(() => {
   }, [expenses, selectedCategory, searchQuery, selectedMonth]);
 
   // Dynamic Monthly History for Recharts (Spending vs Budget Limit)
-  const monthlyHistory = useMemo(() => {
-    const months = [
-      { key: '2026-04', label: 'Apr', baseSpent: 38000 },
-      { key: '2026-05', label: 'May', baseSpent: 44000 },
-      { key: '2026-06', label: 'Jun', baseSpent: 51200 },
-      { key: '2026-07', label: 'Jul', baseSpent: 42000 },
-      { key: '2026-08', label: 'Aug', baseSpent: 48500 },
-      { key: '2026-09', label: 'Sep', baseSpent: 0 },
-    ];
+  // Spending for each of the last 6 months (ending with the current month),
+// calculated only from real expenses.
+const monthlyHistory = useMemo(() => {
+  const today = new Date();
 
-    return months.map((m) => {
-      const actualMonthSpent = expenses
-        .filter((e) => e.date && e.date.startsWith(m.key))
-        .reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+  return Array.from({ length: 6 }, (_, i) => {
+    const monthDate = subMonths(today, 5 - i);     // i=0 → 5 months ago, i=5 → this month
+    const key = format(monthDate, 'yyyy-MM');      // e.g. "2026-10"
 
-      const totalSpent = m.key === '2026-09' ? actualMonthSpent : (m.baseSpent + actualMonthSpent);
+    const spent = expenses
+      .filter((e) => e.date && e.date.startsWith(key))
+      .reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
 
-      return {
-        month: m.label,
-        spent: totalSpent,
-        budget: budgetLimit, // Dynamically tracks current user budgetLimit!
-      };
-    });
-  }, [expenses, budgetLimit]);
+    return {
+      month: format(monthDate, 'MMM'),             // e.g. "Oct"
+      spent,
+      budget: budgetLimit,
+    };
+  });
+}, [expenses, budgetLimit]);
 
   // Stats Calculations
   const stats = useMemo(() => {

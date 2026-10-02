@@ -37,14 +37,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 export const MonthlyBarChart = ({ data = [] }) => {
-  const chartData = data.length > 0 ? data : [
-    { month: 'Apr', spent: 38000, budget: 50000 },
-    { month: 'May', spent: 44000, budget: 50000 },
-    { month: 'Jun', spent: 51200, budget: 50000 },
-    { month: 'Jul', spent: 42000, budget: 50000 },
-    { month: 'Aug', spent: 48500, budget: 50000 },
-    { month: 'Sep', spent: 38799, budget: 50000 },
-  ];
+  const chartData = data;
 
   return (
     <div style={{ width: '100%', height: '300px' }}>

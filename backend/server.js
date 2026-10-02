@@ -8,7 +8,7 @@ import bcrypt from 'bcryptjs';
 dotenv.config();
 
 const app = express();
-const PORT = 5001;
+const PORT = process.env.PORT || 5001;
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 
 app.get("/", (req, res) => {
@@ -35,14 +35,31 @@ const users = [
 
 const sessions = new Map();
 
+// Returns "YYYY-MM" for N months ago (0 = this month).
+const monthKey = (monthsAgo) => {
+  const d = new Date();
+  d.setDate(1); // avoids overflow problems like "31st → next month"
+  d.setMonth(d.getMonth() - monthsAgo);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+};
+
 const expenses = [
-  { id: '1', userId: 'demo-1', title: 'Whole Foods Grocery', amount: 3450, category: 'Food & Dining', date: '2026-09-14', notes: 'Weekly groceries' },
-  { id: '2', userId: 'demo-1', title: 'Monthly Metro Pass', amount: 1200, category: 'Transportation', date: '2026-09-12', notes: 'Commute' },
-  { id: '3', userId: 'demo-1', title: 'Electricity & Water Bill', amount: 2800, category: 'Bills & Utilities', date: '2026-09-10', notes: 'August bill' },
-  { id: '4', userId: 'demo-1', title: 'Apartment Rent', amount: 22000, category: 'Housing & Rent', date: '2026-09-01', notes: 'Monthly rent' },
-  { id: '5', userId: 'demo-1', title: 'Cinema & Dinner', amount: 1850, category: 'Entertainment', date: '2026-09-08', notes: 'Weekend outing' },
-  { id: '6', userId: 'demo-1', title: 'Wireless Headphones', amount: 4999, category: 'Shopping', date: '2026-09-05', notes: 'Noise cancelling' },
-  { id: '7', userId: 'demo-1', title: 'Gym Membership', amount: 2500, category: 'Healthcare & Fitness', date: '2026-09-02', notes: 'Quarterly renew' },
+  // This month
+  { id: '1', userId: 'demo-1', title: 'Whole Foods Grocery', amount: 3450, category: 'Food & Dining', date: `${monthKey(0)}-03`, notes: 'Weekly groceries' },
+  { id: '2', userId: 'demo-1', title: 'Monthly Metro Pass', amount: 1200, category: 'Transportation', date: `${monthKey(0)}-02`, notes: 'Commute' },
+  { id: '3', userId: 'demo-1', title: 'Electricity & Water Bill', amount: 2800, category: 'Bills & Utilities', date: `${monthKey(0)}-01`, notes: 'Monthly bill' },
+  { id: '4', userId: 'demo-1', title: 'Apartment Rent', amount: 22000, category: 'Housing & Rent', date: `${monthKey(0)}-01`, notes: 'Monthly rent' },
+  { id: '5', userId: 'demo-1', title: 'Cinema & Dinner', amount: 1850, category: 'Entertainment', date: `${monthKey(0)}-03`, notes: 'Weekend outing' },
+  { id: '6', userId: 'demo-1', title: 'Wireless Headphones', amount: 4999, category: 'Shopping', date: `${monthKey(0)}-02`, notes: 'Noise cancelling' },
+  { id: '7', userId: 'demo-1', title: 'Gym Membership', amount: 2500, category: 'Healthcare & Fitness', date: `${monthKey(0)}-02`, notes: 'Quarterly renew' },
+
+  // Older months, so the bar chart has something to show
+  { id: '8', userId: 'demo-1', title: 'Apartment Rent', amount: 22000, category: 'Housing & Rent', date: `${monthKey(1)}-01`, notes: 'Monthly rent' },
+  { id: '9', userId: 'demo-1', title: 'Groceries', amount: 9800, category: 'Food & Dining', date: `${monthKey(1)}-15`, notes: '' },
+  { id: '10', userId: 'demo-1', title: 'Apartment Rent', amount: 22000, category: 'Housing & Rent', date: `${monthKey(2)}-01`, notes: 'Monthly rent' },
+  { id: '11', userId: 'demo-1', title: 'Weekend Trip', amount: 14500, category: 'Entertainment', date: `${monthKey(2)}-18`, notes: '' },
+  { id: '12', userId: 'demo-1', title: 'Apartment Rent', amount: 22000, category: 'Housing & Rent', date: `${monthKey(3)}-01`, notes: 'Monthly rent' },
+  { id: '13', userId: 'demo-1', title: 'Online Course', amount: 6500, category: 'Education', date: `${monthKey(3)}-12`, notes: '' },
 ];
 
 const budgets = [{ userId: 'demo-1', month: '2026-09', limit: 50000 }];
@@ -219,17 +236,20 @@ app.get('/api/expenses', authMiddleware, (req, res) => {
 });
 
 app.post('/api/expenses', authMiddleware, (req, res) => {
+  // This line creates the variables used below. It must come first.
   const { title, amount, category, date, notes } = req.body;
 
-  if (!title || !amount || !category || !date) {
-    return res.status(400).json({ message: 'Title, amount, category and date are required' });
+  const numericAmount = Number(amount);
+
+  if (!title || !category || !date || !Number.isFinite(numericAmount) || numericAmount <= 0) {
+    return res.status(400).json({ message: 'Valid title, amount, category and date are required' });
   }
 
   const newExpense = {
     id: crypto.randomUUID(),
     userId: req.user.id,
     title,
-    amount: Number(amount),
+    amount: numericAmount,
     category,
     date,
     notes: notes || '',
@@ -241,21 +261,42 @@ app.post('/api/expenses', authMiddleware, (req, res) => {
 });
 
 app.put('/api/expenses/:id', authMiddleware, (req, res) => {
-  const expenseIndex = expenses.findIndex(
+  const index = expenses.findIndex(
     (expense) => expense.id === req.params.id && expense.userId === req.user.id
   );
 
-  if (expenseIndex === -1) {
+  if (index === -1) {
     return res.status(404).json({ message: 'Expense not found' });
   }
 
+  const current = expenses[index];
+
+  // 1. Take ONLY the fields we allow. Anything else the client sends is ignored.
+  const { title, amount, category, date, notes } = req.body;
+
+  // 2. Validate. Fall back to the current value if a field wasn't sent.
+  const nextAmount = amount === undefined ? current.amount : Number(amount);
+  if (!Number.isFinite(nextAmount) || nextAmount <= 0) {
+    return res.status(400).json({ message: 'Amount must be a number greater than zero' });
+  }
+
+  const nextTitle = title === undefined ? current.title : String(title).trim();
+  if (!nextTitle) {
+    return res.status(400).json({ message: 'Title cannot be empty' });
+  }
+
+  // 3. Build the new object. id and userId always come from the SERVER's copy.
   const updatedExpense = {
-    ...expenses[expenseIndex],
-    ...req.body,
-    amount: Number(req.body.amount ?? expenses[expenseIndex].amount),
+    id: current.id,
+    userId: current.userId,
+    title: nextTitle,
+    amount: nextAmount,
+    category: category ?? current.category,
+    date: date ?? current.date,
+    notes: notes ?? current.notes,
   };
 
-  expenses[expenseIndex] = updatedExpense;
+  expenses[index] = updatedExpense;
   return res.json({ success: true, expense: updatedExpense });
 });
 
