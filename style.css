@@ -10,7 +10,7 @@ body {
   background-color: #f8f9fa; /* Google off-white */
   color: #202124;
   min-height: 100vh;
-  padding: 24px 16px;
+  padding: 24px 17px;
   display: flex;
   justify-content: center;
 }
