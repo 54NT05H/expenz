@@ -2,7 +2,7 @@
 
 A responsive expense tracker with budgeting, built with **React 19**, **Vite**, **Recharts** and an **Express** backend.
 
-> ⚠️ **Portfolio / learning project.** The backend keeps users, sessions and expenses **in memory**, so all data resets whenever the server restarts.
+> ⚠️ **Portfolio / learning project.** Data is stored in a local SQLite file (backend/data/expenz.db)
 
 ## Features
 
@@ -119,9 +119,7 @@ expenz/
 
 ## Known limitations
 
-- Data is **not persistent**: the backend uses in-memory arrays, so a restart deletes all accounts and expenses. A real database is the next step.
-- The monthly budget is stored in the browser (`localStorage`, per user), not on the server.
-- There is no automated test suite yet.
+- There is no automated test suite yet for Frontend.
 
 ## License
 
