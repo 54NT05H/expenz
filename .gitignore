@@ -37,3 +37,9 @@ backend/.env
 .cache/
 coverage/
 *.local
+
+# SQLite database files
+backend/data/
+*.db
+*.db-wal
+*.db-shm
