@@ -23,6 +23,5 @@ export const expenseApi = {
   deleteExpense: async (id) => {
     const response = await axiosClient.delete(`/expenses/${id}`);
     return response.data;
-  }
-
-}
+  },
+};

@@ -5,11 +5,11 @@
   "type": "module",
   "main": "src/server.js",
   "scripts": {
-  "dev": "node --watch src/server.js",
-  "start": "node src/server.js",
-  "test": "vitest run",
-  "test:watch": "vitest"
-},
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "better-sqlite3": "^13.0.3",

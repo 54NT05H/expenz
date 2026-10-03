@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { LogOut, Wallet, Sparkles } from 'lucide-react';
+import { LogOut, Wallet } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const Navbar = () => {

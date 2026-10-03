@@ -11,7 +11,5 @@ export const budgetApi = {
   setBudget: async (budgetData) => {
     const response = await axiosClient.post('/budget', budgetData);
     return response.data;
-  }
-
-  
+  },
 };
