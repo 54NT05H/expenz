@@ -23,11 +23,6 @@ export const expenseApi = {
   deleteExpense: async (id) => {
     const response = await axiosClient.delete(`/expenses/${id}`);
     return response.data;
-  },
+  }
 
-  // Fetch expense statistics / summary for charts
-  getExpenseStats: async (params = {}) => {
-    const response = await axiosClient.get('/expenses/stats', { params });
-    return response.data;
-  },
-};
+}

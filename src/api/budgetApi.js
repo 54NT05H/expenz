@@ -11,11 +11,7 @@ export const budgetApi = {
   setBudget: async (budgetData) => {
     const response = await axiosClient.post('/budget', budgetData);
     return response.data;
-  },
+  }
 
-  // Get budget analytics & category limits
-  getBudgetSummary: async () => {
-    const response = await axiosClient.get('/budget/summary');
-    return response.data;
-  },
+  
 };
