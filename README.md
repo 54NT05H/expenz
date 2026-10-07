@@ -1,6 +1,10 @@
 # 💳 Expenz — Expense Tracker & Budgeting App
 
+![Status](https://img.shields.io/badge/status-in%20development-yellow)
+
 A responsive expense tracker with budgeting, built with **React 19**, **Vite**, **Recharts** and an **Express** backend.
+
+### 🔗 [**Live demo → https://YOUR-APP.vercel.app**](https://YOUR-APP.vercel.app)
 
 > ⚠️ **Portfolio / learning project.** Data is stored in a local SQLite file (backend/data/expenz.db)
 
@@ -65,6 +69,19 @@ Open **http://localhost:5173**. Requests to `/api` are proxied to the backend by
 
 You can also click **Quick Demo Login**, or register your own account.
 
+> ⏳ **Heads-up:** the demo runs on free hosting. If nobody has used it for a while, the first load can take up to a minute while the server wakes up. Demo data is reset periodically, so please don't store anything real in it.
+
+![Expenz dashboard](docs/screenshots/dashboard.png)
+
+<details>
+<summary><b>More screenshots</b></summary>
+
+| Expenses | Budget planner |
+|---|---|
+| ![Expenses page](docs/screenshots/expenses.png) | ![Budget planner](docs/screenshots/budget.png) |
+
+</details>
+
 ## Configuration
 
 Both `.env` files are optional. The defaults work out of the box.
@@ -88,6 +105,15 @@ Copy the templates with `Copy-Item .env.example .env` (PowerShell) or `cp .env.e
 | `npm run format`         | Format the code with Prettier        |
 | `cd backend && npm test` |  Run the backend tests               |
 
+
+## Deployment
+
+| Part | Host | Notes |
+|---|---|---|
+| Frontend | Vercel | Builds with `npm run build`. `vercel.json` forwards `/api/*` to the backend, so the login cookie stays same-site |
+| Backend | Render (free) | Root directory `backend`, start command `npm start`. Needs `NODE_ENV`, `CLIENT_URL` and `SEED_DEMO` environment variables |
+
+
 ## Project structure
 
 ```text
@@ -97,6 +123,10 @@ expenz/
 |      ├── vitest.config.js
 |      ├── data/                    ← the database file appears here (gitignored)
 |      ├── tests/
+|      ├── docs/
+|      |    ├── budget.png
+|      |    ├── dashboard.png
+|      |    └── expenses.png
 |      └── src/
 |           ├── server.js            # starts listening on a port
 |           ├── app.js               # builds the Express app (no listening, so tests can use it)
@@ -119,7 +149,7 @@ expenz/
 
 ## Known limitations
 
-- There is no automated test suite yet for Frontend.
+- - The demo backend runs on a free Render instance: it sleeps when idle, and its data resets whenever it restarts.
 
 ## License
 
