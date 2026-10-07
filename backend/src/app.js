@@ -10,6 +10,7 @@ import { notFoundHandler, errorHandler } from './middleware/errorHandler.js';
 
 // Builds the app but does NOT start listening, so tests can import it.
 export const app = express();
+app.set('trust proxy', 1); // we're behind Render's proxy
 
 app.use(helmet());
 app.use(cors({ origin: config.clientUrl, credentials: true }));

@@ -61,7 +61,7 @@ export const LoginPage = () => {
     >
       <div
         className="glass-card"
-        style={{ width: '100%', maxWidth: '440px', padding: '2.5rem', boxShadow: 'var(--shadow-lg)' }}
+        style={{ width: '100%', maxWidth: '540px', padding: '2.5rem', boxShadow: 'var(--shadow-lg)' }}
       >
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <div
@@ -74,7 +74,7 @@ export const LoginPage = () => {
               alignItems: 'center',
               justifyContent: 'center',
               margin: '0 auto 1.25rem',
-              boxShadow: '0 8px 20px rgba(79, 70, 229, 0.3)',
+              boxShadow: '0 10px 20px rgba(79, 70, 229, 0.3)',
             }}
           >
             <Wallet size={28} color="#ffffff" />
@@ -122,7 +122,7 @@ export const LoginPage = () => {
                 required
                 className="form-input"
                 style={{ paddingLeft: '2.5rem' }}
-                placeholder="alex@expenz.io"
+                placeholder="alex@gmail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -146,8 +146,9 @@ export const LoginPage = () => {
                 type="password"
                 required
                 className="form-input"
+                size={2}
                 style={{ paddingLeft: '2.5rem' }}
-                placeholder="••••••••"
+                placeholder="Enter Your Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -160,7 +161,7 @@ export const LoginPage = () => {
             className="btn btn-primary"
             style={{ width: '100%', marginTop: '0.75rem', padding: '0.8rem' }}
           >
-            {loading ? 'Authenticating...' : 'Sign In'} <ArrowRight size={18} />
+            {loading ? 'Authenticating...' : 'Sign In'} <ArrowRight size={25} />
           </button>
 
           <button
@@ -202,7 +203,7 @@ export const LoginPage = () => {
             color: 'var(--text-muted)',
           }}
         >
-          <ShieldCheck size={16} color="var(--success)" /> HTTP-only session cookie & bcrypt-hashed passwords
+          <ShieldCheck size={16} color="var(--success)" /> Keep Your Expense Safe and Secured
         </div>
       </div>
     </div>

@@ -30,7 +30,7 @@ const DEMO_EXPENSES = [
 
 // Creates the demo account once. Safe to call on every start.
 export const seedDemoData = () => {
-  if (config.isProduction) return; // never ship a known-password account
+  if (config.isProduction && process.env.SEED_DEMO !== 'true') return; // never ship a known-password account
   if (findUserByEmail('demo@fintrack.io')) return; // already seeded
 
   const user = createUser({
