@@ -6,6 +6,17 @@ A responsive expense tracker with budgeting, built with **React 19**, **Vite**, 
 
 ### 🔗 [**Live demo → https://YOUR-APP.vercel.app**](https://YOUR-APP.vercel.app)
 
+![Expenz dashboard](docs/screenshots/dashboard.png)
+
+<details>
+<summary><b>More screenshots</b></summary>
+
+| Expenses | Budget planner |
+|---|---|
+| ![Expenses page](docs/screenshots/expenses.png) | ![Budget planner](docs/screenshots/budget.png) |
+
+</details>
+
 > ⚠️ **Portfolio / learning project.** Data is stored in a local SQLite file (backend/data/expenz.db)
 
 ## Features
@@ -71,16 +82,7 @@ You can also click **Quick Demo Login**, or register your own account.
 
 > ⏳ **Heads-up:** the demo runs on free hosting. If nobody has used it for a while, the first load can take up to a minute while the server wakes up. Demo data is reset periodically, so please don't store anything real in it.
 
-![Expenz dashboard](docs/screenshots/dashboard.png)
 
-<details>
-<summary><b>More screenshots</b></summary>
-
-| Expenses | Budget planner |
-|---|---|
-| ![Expenses page](docs/screenshots/expenses.png) | ![Budget planner](docs/screenshots/budget.png) |
-
-</details>
 
 ## Configuration
 
